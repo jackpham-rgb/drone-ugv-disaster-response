@@ -41,9 +41,9 @@ In the original, this drove the FE-MADDPG policy gradient. Here it's subtracted 
 
 ## Try it
 
-**[Launch the 3D simulation](https://YOUR-USERNAME.github.io/drone-ugv-disaster-response/sim3d_v3.html)**
+**[Launch the 3D simulation](https://jackpham-rgb.github.io/drone-ugv-disaster-response/sim3d_v3.html)**
 
-**[Research portal](https://YOUR-USERNAME.github.io/drone-ugv-disaster-response/index.html)**
+**[Research portal](https://jackpham-rgb.github.io/drone-ugv-disaster-response/index.html)**
 
 Or clone and open `sim3d_v3.html` directly in any browser — no install needed.
 
