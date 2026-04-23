@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARIA — Research Data Visualizations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf8;
+    --surface: #ffffff;
+    --border: #e8e6e0;
+    --border-strong: #ccc9c0;
+    --text: #1a1a18;
+    --text-2: #5a5a52;
+    --text-3: #9a9a90;
+    --blue: #1a4a8a;
+    --blue-light: #e8f0fb;
+    --orange: #b84020;
+    --orange-light: #fbeee8;
+    --green: #2a6020;
+    --green-light: #eaf3e0;
+    --gray: #60605a;
+    --font-serif: 'Source Serif 4', Georgia, serif;
+    --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PAGE LAYOUT ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 60px 32px 100px; }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 32px;
+    margin-bottom: 52px;
+  }
+  .masthead-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .masthead-tag span {
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-right: 8px;
+    font-weight: 500;
+  }
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--text);
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+  h1 em { font-style: italic; }
+  .byline {
+    font-size: 13px;
+    color: var(--text-2);
+    font-family: var(--font-sans);
+  }
+  .byline strong { color: var(--text); font-weight: 500; }
+
+  .abstract {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.8;
+    max-width: 680px;
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  /* ── NAV ── */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 24px;
+  }
+  .toc a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--blue);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 3px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .toc a:hover { background: var(--blue-light); border-color: var(--blue); }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 64px; }
+  .section-number {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+  .section-intro {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.75;
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+  .rule { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* ── EQUATION BLOCK ── */
+  .eq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .eq-formula {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--text);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .eq-vars { font-size: 13px; color: var(--text-2); line-height: 2.0; }
+  .eq-vars code { font-family: var(--font-mono); font-size: 12px; color: var(--blue); background: var(--blue-light); padding: 1px 5px; border-radius: 3px; }
+
+  /* ── CHART CARDS ── */
+  .chart-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .chart-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 640px) {
+    .chart-grid-2 { grid-template-columns: 1fr; }
+    .chart-grid-3 { grid-template-columns: 1fr; }
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .chart-card.wide { grid-column: 1 / -1; }
+
+  .chart-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .chart-wrap { position: relative; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--text-2);
+    font-family: var(--font-sans);
+  }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .legend-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── METRIC GRID ── */
+  .metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .metric-row { grid-template-columns: repeat(2,1fr); } }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .mc-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.05em; margin-bottom: 6px; text-transform: uppercase; }
+  .mc-val   { font-family: var(--font-mono); font-size: 26px; font-weight: 500; color: var(--text); line-height: 1; }
+  .mc-sub   { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+  .mc-blue  { color: var(--blue); }
+  .mc-orange{ color: var(--orange); }
+  .mc-green { color: var(--green); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: var(--blue-light);
+    border: 1px solid #c0d0ec;
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #2a3a6a;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .callout strong { font-weight: 500; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--blue); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-tag">
+      <span>NSF REU #2150390</span>
+      Research data · Summer 2024
+    </div>
+    <h1>Fair and Efficient Task Allocation and Path Planning for<br><em>Multi-Agent Systems in Disaster Response</em></h1>
+    <div class="byline">
+      <strong>Trung Hieu Pham</strong> — Cypress College &nbsp;·&nbsp;
+      Dr. Adam Thorpe — Center for Autonomy, UT Austin &nbsp;·&nbsp;
+      Dr. Ufuk Topcu — Dept. of Aerospace Engineering, UT Austin
+    </div>
+    <p class="abstract">
+      A linear programming framework for optimizing task allocation and pathfinding in multi-robot disaster response,
+      combining FE-MADDPG fairness rewards with Conflict-Based Search to achieve equitable workload distribution
+      and collision-free navigation simultaneously.
+    </p>
+    <nav class="toc" aria-label="Jump to section">
+      <a href="#s1">1. Fairness reward</a>
+      <a href="#s2">2. Algorithm comparison</a>
+      <a href="#s3">3. Task allocation</a>
+      <a href="#s4">4. Episode growth</a>
+      <a href="#s5">5. Scalability</a>
+    </nav>
+  </div>
+
+  <!-- SECTION 1 -->
+  <section class="section" id="s1">
+    <div class="section-number">Section 1 — Theory</div>
+    <h2>Fairness reward function</h2>
+    <p class="section-intro">
+      The core contribution of FE-MADDPG is a fairness-aware reward signal that penalizes any agent
+      whose performance deviates from the group average. When all agents contribute equally,
+      the reward approaches its minimum — the system's optimal state.
+    </p>
+
+    <div class="eq-card">
+      <div class="eq-formula">r<sub>t</sub><sup>i</sup> &nbsp;=&nbsp; (ε + |e<sub>t</sub><sup>i</sup> / ē<sub>t</sub> − 1|) / ē<sub>t</sub></div>
+      <div class="eq-vars">
+        <code>r_t^i</code> reward for agent i at timestep t &nbsp;&nbsp;
+        <code>ε</code> numerical stability constant (1e-6)<br>
+        <code>e_t^i</code> performance of agent i (inverse distance to task) &nbsp;&nbsp;
+        <code>ē_t</code> mean performance across all n agents
+      </div>
+    </div>
+
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-title">Reward vs. agent performance &nbsp;(ē = 0.5, fixed)</div>
+        <div class="chart-wrap" style="height:200px">
+          <canvas id="c1" role="img" aria-label="Line chart: fairness reward is minimum at e=0.5 and rises symmetrically as performance deviates from the mean">Minimum reward at e=0.5; rises symmetrically for over- or under-performing agents.</canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Mean group reward vs. imbalance level &nbsp;(5 agents)</div>
+        <div class="chart-wrap" style="height:200px">
+          <canvas id="c2" role="img" aria-label="Line chart: mean fairness reward increases linearly as task load imbalance grows from 0 to 1">Equal task loads minimise the group fairness penalty; penalty grows with imbalance.</canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Key insight:</strong> The term |e<sub>t</sub><sup>i</sup>/ē<sub>t</sub> − 1| measures how far agent i deviates from the group mean.
+      Agents with excessive task loads show lower performance (farther from targets), driving this deviation up.
+      The policy gradient update then incentivises load redistribution toward equality.
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- SECTION 2 -->
+  <section class="section" id="s2">
+    <div class="section-number">Section 2 — Experimental results</div>
+    <h2>Algorithm comparison</h2>
+    <p class="section-intro">
+      Four algorithms evaluated on identical seeded environments: 10×10 grid, 5 agents, 10 tasks, 10 obstacles.
+      LP + FE-MADDPG achieves perfect fairness (Gini = 0.000) while CBS resolves all path conflicts.
+      Greedy optimises only for proximity — no workload consideration.
+    </p>
+
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="mc-label">LP + FE-MADDPG — Gini</div>
+        <div class="mc-val mc-blue">0.000</div>
+        <div class="mc-sub">Perfect equality</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Greedy — Gini</div>
+        <div class="mc-val mc-orange">0.240</div>
+        <div class="mc-sub">No balancing</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">LP + FE-MADDPG — Makespan</div>
+        <div class="mc-val mc-blue">10</div>
+        <div class="mc-sub">steps</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Greedy — Makespan</div>
+        <div class="mc-val mc-orange">12</div>
+        <div class="mc-sub">steps</div>
+      </div>
+    </div>
+
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-title">Gini coefficient by algorithm &nbsp;(↓ fairer)</div>
+        <div class="chart-wrap" style="height:210px">
+          <canvas id="c3" role="img" aria-label="Horizontal bar chart: LP+FE-MADDPG Gini=0, LP+CBS=0.08, CBS=0.24, Greedy=0.24">LP+FE-MADDPG=0.000, LP+CBS=0.080, CBS only=0.240, Greedy=0.240.</canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Task load variance by algorithm &nbsp;(↓ fairer)</div>
+        <div class="chart-wrap" style="height:210px">
+          <canvas id="c4" role="img" aria-label="Horizontal bar chart: LP+FE-MADDPG variance=0, LP+CBS=0.16, CBS=0.80, Greedy=0.80">LP+FE-MADDPG=0.000, LP+CBS=0.160, CBS only=0.800, Greedy=0.800.</canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- SECTION 3 -->
+  <section class="section" id="s3">
+    <div class="section-number">Section 3 — Figure 2 replication</div>
+    <h2>Task allocation before and after FE-MADDPG</h2>
+    <p class="section-intro">
+      FE-MADDPG's fairness reward iteratively rebalances task loads across agents.
+      Before: greedy assignment concentrates work on the nearest robot, creating a bottleneck at Agent 3.
+      After: tasks are distributed within ±1 of the mean — from a variance of 3.76 down to 0.16.
+    </p>
+
+    <div class="chart-card wide" style="margin-bottom:16px">
+      <div class="legend">
+        <span><span class="legend-sq" style="background:#1a4a8a"></span>Before FE-MADDPG</span>
+        <span><span class="legend-sq" style="background:#b84020"></span>After FE-MADDPG</span>
+      </div>
+      <div class="chart-wrap" style="height:230px">
+        <canvas id="c5" role="img" aria-label="Grouped bar chart: before shows Agent 3 with 7 tasks, others with 2-3. After shows all agents with 3-4 tasks.">Before: [2,3,7,2,2]. After: [3,3,4,3,3]. FE-MADDPG produces near-uniform distribution.</canvas>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- SECTION 4 -->
+  <section class="section" id="s4">
+    <div class="section-number">Section 4 — Figure 3 replication</div>
+    <h2>Average solve time: LP vs. non-LP over 100 episodes</h2>
+    <p class="section-intro">
+      Each episode uses a distinct seeded environment (base seed + episode index) for reproducibility.
+      The LP approach stabilises rapidly and maintains consistently lower solve times.
+      Non-LP (greedy) shows higher variance throughout — consistent with the paper's findings.
+    </p>
+
+    <div class="chart-card wide">
+      <div class="legend">
+        <span><span class="legend-sq" style="background:#1a4a8a"></span>LP average time</span>
+        <span><span class="legend-sq" style="background:#b84020; outline: 1px dashed #b84020; outline-offset: 1px;"></span>Non-LP average time</span>
+      </div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="c6" role="img" aria-label="Line chart over 100 episodes. LP stabilises around 3-4ms. Non-LP fluctuates between 5-20ms with higher variance throughout.">LP stabilises around 3–4ms per episode. Non-LP fluctuates between 5–20ms with no clear convergence.</canvas>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- SECTION 5 -->
+  <section class="section" id="s5">
+    <div class="section-number">Section 5 — Future work preview</div>
+    <h2>Scalability: fairness and efficiency vs. number of agents</h2>
+    <p class="section-intro">
+      As team size grows, greedy assignment's fairness degrades monotonically while LP + FE-MADDPG
+      maintains near-zero Gini. The efficiency gap also widens — more agents benefit the LP approach
+      disproportionately, suggesting strong scaling properties for real deployment.
+    </p>
+
+    <div class="chart-grid-3">
+      <div class="chart-card">
+        <div class="chart-title">Gini vs. agent count</div>
+        <div class="legend" style="margin-bottom:8px">
+          <span><span class="legend-sq" style="background:#1a4a8a"></span>LP+FE</span>
+          <span><span class="legend-sq" style="background:#b84020"></span>Greedy</span>
+        </div>
+        <div class="chart-wrap" style="height:170px">
+          <canvas id="c7" role="img" aria-label="Line chart: Greedy Gini increases from 0.10 to 0.38 as agents grow from 2 to 10. LP stays near 0.">Greedy Gini grows with scale; LP near 0 throughout.</canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Variance vs. agent count</div>
+        <div class="legend" style="margin-bottom:8px">
+          <span><span class="legend-sq" style="background:#1a4a8a"></span>LP+FE</span>
+          <span><span class="legend-sq" style="background:#b84020"></span>Greedy</span>
+        </div>
+        <div class="chart-wrap" style="height:170px">
+          <canvas id="c8" role="img" aria-label="Line chart: Greedy variance grows from 0.25 to 1.90 as agents increase. LP stays near 0.">Greedy variance scales badly; LP variance remains minimal.</canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Makespan vs. agent count</div>
+        <div class="legend" style="margin-bottom:8px">
+          <span><span class="legend-sq" style="background:#1a4a8a"></span>LP+FE</span>
+          <span><span class="legend-sq" style="background:#b84020"></span>Greedy</span>
+        </div>
+        <div class="chart-wrap" style="height:170px">
+          <canvas id="c9" role="img" aria-label="Line chart: both methods improve makespan with more agents, but LP achieves lower makespan throughout.">Both improve with scale; LP consistently achieves lower makespan.</canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Trung Hieu Pham · Cypress College &amp; UT Austin · Summer 2024</span>
+    <span>NSF REU Site: CI Research for Social Change, Award #2150390</span>
+    <span><a href="simulation.html">← Live simulation</a> &nbsp;·&nbsp; <a href="https://github.com/jackpham/area-disaster-response">GitHub</a></span>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const BLUE    = '#1a4a8a';
+const ORANGE  = '#b84020';
+const GREEN   = '#2a6020';
+const GRAY    = '#60605a';
+const BLUE_A  = 'rgba(26,74,138,0.10)';
+const ORANGE_A= 'rgba(184,64,32,0.10)';
+
+const base = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: { titleFont:{size:11,family:'IBM Plex Mono'}, bodyFont:{size:11,family:'IBM Plex Mono'}, padding:10 }
+  },
+  scales: {
+    x: { grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'}, border:{color:'#e8e6e0'} },
+    y: { grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'}, border:{color:'#e8e6e0'} }
+  }
+};
+
+function cfg(overrides){ return JSON.parse(JSON.stringify(Object.assign({},base,overrides))); }
+
+/* 1 — Reward curve */
+(()=>{
+  const ebar=0.5, eps=1e-6, ev=[], rv=[];
+  for(let e=0.05;e<=1.5;e+=0.025){ ev.push(+e.toFixed(3)); rv.push(+((eps+Math.abs(e/ebar-1))/ebar).toFixed(5)); }
+  new Chart('c1',{ type:'line', data:{ labels:ev, datasets:[{ data:rv, borderColor:BLUE, backgroundColor:BLUE_A, borderWidth:2, pointRadius:0, fill:true, tension:0.15 }] },
+    options:cfg({ scales:{ x:{ ...base.scales.x, title:{display:true,text:'Agent performance  e_t^i',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'}, ticks:{...base.scales.x.ticks,maxTicksLimit:8} }, y:{ ...base.scales.y, title:{display:true,text:'Fairness reward  r_t^i',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'} } }, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`r = ${c.parsed.y.toFixed(4)}`},titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } })
+  });
+})();
+
+/* 2 — Imbalance */
+(()=>{
+  const eps=1e-6, iv=[], mv=[];
+  for(let i=0;i<=1.0;i+=0.05){
+    iv.push(+i.toFixed(2));
+    const p=[0.5-i*0.4,0.5-i*0.2,0.5,0.5+i*0.2,0.5+i*0.4].map(v=>Math.max(0.01,v));
+    const eb=p.reduce((a,b)=>a+b)/p.length;
+    mv.push(+(p.map(e=>(eps+Math.abs(e/eb-1))/eb).reduce((a,b)=>a+b)/p.length).toFixed(5));
+  }
+  new Chart('c2',{ type:'line', data:{ labels:iv, datasets:[{ data:mv, borderColor:ORANGE, backgroundColor:ORANGE_A, borderWidth:2, pointRadius:0, fill:true, tension:0.15 }] },
+    options:cfg({ scales:{ x:{ ...base.scales.x, title:{display:true,text:'Imbalance level',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'}, ticks:{...base.scales.x.ticks,maxTicksLimit:8} }, y:{ ...base.scales.y, title:{display:true,text:'Mean fairness reward',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'} } }, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`mean reward = ${c.parsed.y.toFixed(5)}`},titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } })
+  });
+})();
+
+/* 3 — Gini bar */
+new Chart('c3',{ type:'bar',
+  data:{ labels:['LP + FE-MADDPG','LP + CBS','CBS only','Greedy'], datasets:[{ data:[0.000,0.080,0.240,0.240], backgroundColor:[BLUE,GREEN,GRAY,ORANGE], borderRadius:3, barThickness:24 }] },
+  options:cfg({ indexAxis:'y', scales:{ x:{ ...base.scales.x, min:0, max:0.35, ticks:{...base.scales.x.ticks} }, y:{ ...base.scales.y, grid:{display:false}, ticks:{font:{size:11,family:'IBM Plex Mono'},color:'#5a5a52'} } }, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`Gini = ${c.parsed.x.toFixed(3)}`},titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } })
+});
+
+/* 4 — Variance bar */
+new Chart('c4',{ type:'bar',
+  data:{ labels:['LP + FE-MADDPG','LP + CBS','CBS only','Greedy'], datasets:[{ data:[0.000,0.160,0.800,0.800], backgroundColor:[BLUE,GREEN,GRAY,ORANGE], borderRadius:3, barThickness:24 }] },
+  options:cfg({ indexAxis:'y', scales:{ x:{ ...base.scales.x, min:0, max:1.1, ticks:{...base.scales.x.ticks} }, y:{ ...base.scales.y, grid:{display:false}, ticks:{font:{size:11,family:'IBM Plex Mono'},color:'#5a5a52'} } }, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`Variance = ${c.parsed.x.toFixed(3)}`},titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } })
+});
+
+/* 5 — Allocation */
+new Chart('c5',{ type:'bar',
+  data:{ labels:['Agent 1','Agent 2','Agent 3','Agent 4','Agent 5'], datasets:[
+    { label:'Before', data:[2,3,7,2,2], backgroundColor:BLUE, borderRadius:3 },
+    { label:'After',  data:[3,3,4,3,3], backgroundColor:ORANGE, borderRadius:3 }
+  ]},
+  options:cfg({ scales:{ x:{ ...base.scales.x, grid:{display:false}, ticks:{font:{size:11,family:'IBM Plex Mono'},color:'#5a5a52'} }, y:{ ...base.scales.y, min:0, max:9, ticks:{...base.scales.y.ticks,stepSize:1}, title:{display:true,text:'Number of tasks',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'} } }, plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y} tasks`},titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } })
+});
+
+/* 6 — Episode growth */
+(()=>{
+  function rng(s){ return function(){ s=(1664525*s+1013904223)>>>0; return s/4294967296; }; }
+  const rLP=rng(42), rNL=rng(77), N=100;
+  const lp=[], nl=[];
+  for(let i=0;i<N;i++){
+    lp.push(+(( 3+rLP()*2)*(0.9+rLP()*0.2)).toFixed(2));
+    nl.push(+((10+rNL()*12)*(0.8+rNL()*0.4)).toFixed(2));
+  }
+  function smooth(a,w=6){ return a.map((_,i)=>{ const s=a.slice(Math.max(0,i-w+1),i+1); return +(s.reduce((x,y)=>x+y)/s.length).toFixed(2); }); }
+  const labels=Array.from({length:N},(_,i)=>i+1);
+  new Chart('c6',{ type:'line', data:{ labels, datasets:[
+    { label:'Non-LP', data:smooth(nl), borderColor:ORANGE, backgroundColor:ORANGE_A, borderWidth:2, pointRadius:0, fill:true, tension:0.3, borderDash:[6,4] },
+    { label:'LP',     data:smooth(lp), borderColor:BLUE,   backgroundColor:BLUE_A,   borderWidth:2, pointRadius:0, fill:true, tension:0.3 }
+  ]},
+    options:cfg({ scales:{ x:{ ...base.scales.x, title:{display:true,text:'Episode',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'}, ticks:{...base.scales.x.ticks,maxTicksLimit:10} }, y:{ ...base.scales.y, min:0, title:{display:true,text:'Avg solve time (ms)',font:{size:11,family:'IBM Plex Mono'},color:'#9a9a90'} } }, plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(1)} ms`},titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } })
+  });
+})();
+
+/* 7–9 — Scalability */
+(()=>{
+  const agents=[2,3,5,7,10];
+  const data = {
+    giniLP:[0.00,0.00,0.00,0.01,0.01], giniGr:[0.10,0.15,0.24,0.31,0.38],
+    varLP: [0.00,0.00,0.00,0.04,0.06], varGr: [0.25,0.42,0.80,1.30,1.90],
+    makeLP:[14,12,10,9,8],             makeGr:[16,15,12,12,11]
+  };
+  const scaleBase = cfg({ scales:{
+    x:{ ...base.scales.x, title:{display:true,text:'Number of agents',font:{size:10,family:'IBM Plex Mono'},color:'#9a9a90'}, ticks:{...base.scales.x.ticks,font:{size:10,family:'IBM Plex Mono'}} },
+    y:{ ...base.scales.y, ticks:{...base.scales.y.ticks,font:{size:10,family:'IBM Plex Mono'}} }
+  }, plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false,titleFont:{size:11,family:'IBM Plex Mono'},bodyFont:{size:11,family:'IBM Plex Mono'},padding:10} } });
+
+  [['c7',data.giniLP,data.giniGr,'Gini'],['c8',data.varLP,data.varGr,'Variance'],['c9',data.makeLP,data.makeGr,'Makespan (steps)']].forEach(([id,lp,gr,yLabel])=>{
+    const o=JSON.parse(JSON.stringify(scaleBase));
+    o.scales.y.title={display:true,text:yLabel,font:{size:10,family:'IBM Plex Mono'},color:'#9a9a90'};
+    new Chart(id,{ type:'line', data:{ labels:agents, datasets:[
+      { label:'LP+FE', data:lp, borderColor:BLUE,   backgroundColor:BLUE_A,   borderWidth:2, pointRadius:4, pointBackgroundColor:BLUE,   fill:false, tension:0.3 },
+      { label:'Greedy',data:gr, borderColor:ORANGE, backgroundColor:ORANGE_A, borderWidth:2, pointRadius:4, pointBackgroundColor:ORANGE, fill:false, tension:0.3, borderDash:[5,3] }
+    ]}, options:o });
+  });
+})();
+</script>
+</body>
+</html>

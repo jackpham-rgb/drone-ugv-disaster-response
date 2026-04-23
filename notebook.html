@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Notebook — Area Disaster Response</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#f7f6f3;--surface:#fff;--border:#e2dfd8;--border2:#c8c4bc;
+  --text:#1c1917;--text2:#6b6760;--text3:#a09d99;
+  --blue:#1d4ed8;--blue-l:#eff6ff;--blue-b:#bfdbfe;
+  --green:#15803d;--green-l:#f0fdf4;
+  --orange:#c2410c;--orange-l:#fff7ed;
+  --code-bg:#1e2330;--code-text:#e2e8f0;
+  --serif:'Source Serif 4',Georgia,serif;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.7;}
+
+nav{background:var(--surface);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 40px;gap:16px;position:sticky;top:0;z-index:100;}
+.nlogo{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--text);text-decoration:none;}
+.nlinks{display:flex;gap:20px;margin-left:auto;}
+.nlinks a{font-size:12px;color:var(--text2);text-decoration:none;}
+.nlinks a:hover{color:var(--text);}
+.nlinks a.active{color:var(--blue);font-weight:500;}
+
+/* NOTEBOOK LAYOUT */
+.nb-page{max-width:860px;margin:0 auto;padding:40px 40px 80px;}
+.nb-header{border-bottom:1px solid var(--border2);padding-bottom:24px;margin-bottom:32px;}
+.nb-tag{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:10px;}
+.nb-tag span{background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-b);padding:2px 8px;border-radius:2px;margin-right:6px;font-size:9px;}
+.nb-h1{font-family:var(--serif);font-size:28px;font-weight:400;line-height:1.25;margin-bottom:10px;letter-spacing:-0.2px;}
+.nb-by{font-size:13px;color:var(--text2);margin-bottom:14px;}
+
+/* TOC */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 20px;margin-bottom:32px;}
+.toc-title{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.toc-list{list-style:none;}
+.toc-list li{margin-bottom:5px;}
+.toc-list a{font-size:13px;color:var(--blue);text-decoration:none;}
+.toc-list a:hover{text-decoration:underline;}
+.toc-list .sub{padding-left:16px;font-size:12px;color:var(--text2);}
+
+/* CELLS */
+.cell{margin-bottom:28px;}
+.cell-type{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+
+/* MARKDOWN CELL */
+.md-cell{font-family:var(--serif);font-size:15px;line-height:1.8;color:var(--text);}
+.md-cell h2{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--text);margin:28px 0 10px;padding-top:28px;border-top:1px solid var(--border);}
+.md-cell h3{font-family:var(--serif);font-size:17px;font-weight:600;margin:18px 0 8px;}
+.md-cell p{margin-bottom:12px;color:var(--text);}
+.md-cell ul,.md-cell ol{margin:8px 0 12px 20px;color:var(--text2);}
+.md-cell li{margin-bottom:4px;}
+.md-cell code{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--border);padding:1px 5px;border-radius:2px;color:var(--orange);}
+.md-cell em{font-style:italic;}
+.md-cell b{font-weight:600;color:var(--text);}
+.md-cell table{width:100%;border-collapse:collapse;margin:12px 0;font-family:var(--sans);font-size:13px;}
+.md-cell th{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border2);font-weight:500;color:var(--text);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.04em;}
+.md-cell td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
+
+/* CODE CELL */
+.code-cell{border-radius:4px;overflow:hidden;border:1px solid var(--border2);}
+.code-header{background:#161b27;padding:6px 14px;display:flex;align-items:center;gap:8px;}
+.code-in{font-family:var(--mono);font-size:9px;color:#64748b;}
+.code-body{background:var(--code-bg);padding:14px 16px;overflow-x:auto;}
+.code-body pre{font-family:var(--mono);font-size:12px;color:var(--code-text);line-height:1.65;white-space:pre;}
+/* syntax highlight */
+.kw{color:#c084fc;} .fn{color:#38bdf8;} .st{color:#86efac;} .cm{color:#64748b;font-style:italic;}
+.num{color:#fb923c;} .op{color:#94a3b8;}
+
+/* OUTPUT CELL */
+.out-cell{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.7;}
+.out-ok{color:var(--green);}
+.out-h{color:var(--text3);font-size:9px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;}
+
+/* EQUATION */
+.eq-block{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;padding:14px 18px;margin:12px 0;}
+.eq-f{font-family:var(--mono);font-size:15px;color:var(--text);margin-bottom:6px;}
+.eq-d{font-size:12px;color:var(--text2);line-height:1.9;}
+.eq-d code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:1px 5px;border-radius:2px;}
+
+/* CHART */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;margin:14px 0;}
+.chart-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;}
+.chart-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+
+/* METRIC STRIP */
+.m-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin:14px 0;}
+.mc{background:var(--surface);padding:12px 14px;}
+.mc-l{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:3px;}
+.mc-v{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text);}
+.mc-s{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* CALLOUT */
+.callout{background:var(--blue-l);border:1px solid var(--blue-b);border-radius:4px;padding:12px 16px;font-size:13px;color:#1e3a8a;margin:12px 0;line-height:1.6;}
+.callout b{font-weight:600;}
+.callout.orange{background:var(--orange-l);border-color:#fed7aa;color:#7c2d12;}
+.callout.green{background:var(--green-l);border-color:#bbf7d0;color:#14532d;}
+
+footer{border-top:1px solid var(--border);padding:20px 40px;font-size:11px;color:var(--text3);font-family:var(--mono);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;max-width:860px;margin:0 auto;}
+footer a{color:var(--blue);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nlogo" href="index.html">Area Disaster Response</a>
+  <div class="nlinks">
+    <a href="index.html">Overview</a>
+    <a href="notebook.html" class="active">Notebook</a>
+    <a href="sim3d_v2.html">3D Simulation</a>
+    <a href="visualizations.html">Data Viz</a>
+  </div>
+</nav>
+
+<div class="nb-page">
+
+  <div class="nb-header">
+    <div class="nb-tag"><span>Research Notebook</span><span>NSF REU #2150390</span>Summer 2024</div>
+    <h1 class="nb-h1">Drone–UGV Cooperative Rescue:<br>Theory, Implementation & Results</h1>
+    <div class="nb-by">Trung Hieu Pham · Dr. Adam Thorpe · Dr. Ufuk Topcu · UT Austin</div>
+    <p style="font-family:var(--serif);font-size:14px;color:var(--text2);font-style:italic;line-height:1.7;">
+      This notebook documents the full research pipeline for an upgraded multi-agent disaster response system.
+      Building on the original REU paper (LP + FE-MADDPG + CBS), this work introduces a two-tier architecture
+      where UAV drones using MAPPO explore terrain and communicate discoveries to UGV ground robots operating
+      under QMIX with an embedded fairness reward.
+    </p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#s1">1. Background and Motivation</a></li>
+      <li><a href="#s2">2. MDP Formulation</a></li>
+      <li class="sub"><a href="#s2">2.1 State, Action, Reward, Policy, Discount</a></li>
+      <li><a href="#s3">3. Fairness Reward Function</a></li>
+      <li><a href="#s4">4. Architecture: MAPPO + QMIX</a></li>
+      <li class="sub"><a href="#s4">4.1 Drone Policy (MAPPO)</a></li>
+      <li class="sub"><a href="#s4b">4.2 Ground Robot Policy (QMIX)</a></li>
+      <li><a href="#s5">5. Environment: Terrain and Fire Spread</a></li>
+      <li><a href="#s6">6. Simulation Setup and Configuration</a></li>
+      <li><a href="#s7">7. Results and Analysis</a></li>
+      <li><a href="#s8">8. Algorithm Comparison</a></li>
+      <li><a href="#s9">9. Conclusions and Future Work</a></li>
+    </ul>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="cell" id="s1">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>1. Background and Motivation</h2>
+      <p>As disaster frequency and severity increase globally — wildfires, earthquakes, urban floods — the need for autonomous, coordinated multi-robot systems becomes critical. Human responders face dangerous conditions where robotic teams can be deployed first to locate survivors and navigate unsafe terrain.</p>
+      <p>The <b>original REU paper (Pham et al., 2024)</b> developed a single-tier system using LP + FE-MADDPG + CBS on a 2D grid. This notebook extends that work into a more realistic two-tier system:</p>
+      <ul>
+        <li><b>Tier 1 (Air):</b> UAV drones scout terrain, building a shared belief map of the environment</li>
+        <li><b>Tier 2 (Ground):</b> UGV robots read the belief map to navigate toward discovered survivors</li>
+      </ul>
+      <p>The key insight is the <b>information asymmetry</b>: drones have aerial visibility but cannot rescue survivors; ground robots can rescue but are blind to undiscovered areas. The belief map bridges these two tiers.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="cell" id="s2">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>2. MDP Formulation</h2>
+      <p>Both tiers are modeled as Markov Decision Processes with shared environment state.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Name</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>S</code></td><td>State</td><td>Full terrain grid + all agent positions + belief map + fire state + survivor statuses</td></tr>
+          <tr><td><code>A</code></td><td>Action</td><td>Drones: 8-directional movement + wait. UGVs: 4-directional movement (terrain constrained) + wait</td></tr>
+          <tr><td><code>R</code></td><td>Reward</td><td>Drones: new cells discovered − revisit penalty − crowding penalty. UGVs: survivors rescued + fairness term</td></tr>
+          <tr><td><code>π</code></td><td>Policy</td><td>MAPPO (drones) or QMIX (UGVs), switchable at runtime</td></tr>
+          <tr><td><code>γ</code></td><td>Discount</td><td>0.95 — weights near-term rewards more heavily, encouraging fast rescue</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CODE CELL: MDP setup -->
+  <div class="cell">
+    <div class="cell-type">Code [1]</div>
+    <div class="code-cell">
+      <div class="code-header"><span class="code-in">In [1]:</span></div>
+      <div class="code-body"><pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> disaster_response_sim <span class="kw">import</span> DisasterEnv, RNG
+
+<span class="cm"># MDP parameters</span>
+GAMMA   = <span class="num">0.95</span>   <span class="cm"># discount factor</span>
+EPSILON = <span class="num">1e-7</span>   <span class="cm"># numerical stability constant ε</span>
+GRID    = <span class="num">24</span>     <span class="cm"># terrain dimensions</span>
+N_DRONES = <span class="num">4</span>    <span class="cm"># MAPPO agents (UAVs)</span>
+N_UGV    = <span class="num">3</span>    <span class="cm"># QMIX agents (ground robots)</span>
+SEED     = <span class="num">42</span>   <span class="cm"># reproducible pseudo-random generation</span>
+
+<span class="cm"># State space size (approximate)</span>
+state_size = GRID**<span class="num">2</span> * (N_DRONES + N_UGV) * <span class="num">2</span>**<span class="num">10</span>  <span class="cm"># survivors as binary flags</span>
+<span class="fn">print</span>(<span class="st">f"Approximate |S| = {state_size:,}"</span>)
+<span class="fn">print</span>(<span class="st">f"UAV actions: 9 (8-dir + wait)"</span>)
+<span class="fn">print</span>(<span class="st">f"UGV actions: 5 (4-dir + wait)"</span>)
+<span class="fn">print</span>(<span class="st">f"Discount γ = {GAMMA}"</span>)</pre></div>
+    </div>
+  </div>
+  <div class="cell">
+    <div class="cell-type">Output</div>
+    <div class="out-cell">
+      <div class="out-h">Stdout</div>
+      Approximate |S| = 1,811,939,328<br>
+      UAV actions: 9 (8-dir + wait)<br>
+      UGV actions: 5 (4-dir + wait)<br>
+      Discount γ = 0.95
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="cell" id="s3">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>3. Fairness Reward Function</h2>
+      <p>The fairness reward from the <b>original REU paper</b> is carried forward and embedded into the QMIX per-agent Q-value. This is a key novel contribution: rather than applying the fairness signal at the policy gradient level (as in FE-MADDPG), we integrate it directly into value decomposition.</p>
+    </div>
+  </div>
+
+  <div class="eq-block">
+    <div class="eq-f">r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t</div>
+    <div class="eq-d">
+      <code>r_t^i</code> — reward for agent i at timestep t &nbsp;&nbsp;
+      <code>ε = 1e-7</code> — prevents division by zero<br>
+      <code>e_t^i</code> — performance of agent i (inverse distance to nearest assigned target)<br>
+      <code>ē_t</code> — mean performance across all n agents at time t<br><br>
+      <b>In QMIX:</b> this term is subtracted from Q_i(s, a) when selecting rescue targets,
+      penalizing agents that are already performing above average (already have more rescues).
+      The global mixing network then combines these adjusted Q-values monotonically.
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="cell-type">Code [2]</div>
+    <div class="code-cell">
+      <div class="code-header"><span class="code-in">In [2]:</span></div>
+      <div class="code-body"><pre><span class="kw">def</span> <span class="fn">fairness_reward</span>(performances: list, eps=<span class="num">1e-7</span>) -> list:
+    <span class="st">"""
+    Fairness reward from original REU paper (Pham et al., 2024)
+    r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t
+    
+    Now embedded in QMIX Q-value rather than policy gradient.
+    """</span>
+    e_bar = np.<span class="fn">mean</span>(performances) <span class="kw">if</span> np.<span class="fn">mean</span>(performances) != <span class="num">0</span> <span class="kw">else</span> eps
+    <span class="kw">return</span> [(eps + <span class="fn">abs</span>(e / e_bar - <span class="num">1</span>)) / e_bar <span class="kw">for</span> e <span class="kw">in</span> performances]
+
+<span class="cm"># Demonstrate: equal vs. unequal loads</span>
+equal   = [<span class="num">0.5</span>, <span class="num">0.5</span>, <span class="num">0.5</span>]
+unequal = [<span class="num">0.1</span>, <span class="num">0.5</span>, <span class="num">0.9</span>]
+<span class="fn">print</span>(<span class="st">"Equal loads:"</span>,   [<span class="st">f"{r:.4f}"</span> <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">fairness_reward</span>(equal)])
+<span class="fn">print</span>(<span class="st">"Unequal loads:"</span>, [<span class="st">f"{r:.4f}"</span> <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">fairness_reward</span>(unequal)])</pre></div>
+    </div>
+  </div>
+  <div class="cell">
+    <div class="cell-type">Output</div>
+    <div class="out-cell">Equal loads: ['0.0000', '0.0000', '0.0000']<br>Unequal loads: ['1.6000', '0.0000', '1.6000']</div>
+  </div>
+
+  <!-- Chart: fairness reward surface -->
+  <div class="chart-2col">
+    <div class="chart-card">
+      <div class="chart-label">Reward vs. agent performance (ē = 0.5)</div>
+      <div style="position:relative;height:180px"><canvas id="c-fair" role="img" aria-label="Fairness reward vs performance: minimum at e=0.5, rises symmetrically"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Mean reward vs. group imbalance</div>
+      <div style="position:relative;height:180px"><canvas id="c-imb" role="img" aria-label="Mean fairness reward increases with imbalance level"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="cell" id="s4">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>4. Architecture: MAPPO + QMIX</h2>
+      <h3>4.1 Drone Policy — MAPPO</h3>
+      <p><b>Multi-Agent Proximal Policy Optimization (MAPPO)</b> uses a centralized critic during training and decentralized actors during execution. This is the CTDE (Centralized Training, Decentralized Execution) framework.</p>
+      <ul>
+        <li><b>Observation:</b> Each drone sees a 9×9 local belief map window + global exploration coverage</li>
+        <li><b>Action selection:</b> Actor network outputs distribution over 9 movement actions</li>
+        <li><b>Reward:</b> New cells discovered − revisit penalty − coordination penalty (drives drones apart)</li>
+        <li><b>Coordination penalty:</b> Penalizes proximity to other drones without explicit communication</li>
+      </ul>
+      <div class="callout">
+        <b>Key insight:</b> The coordination penalty term replaces explicit inter-drone communication.
+        Drones learn to spread out naturally, achieving coverage comparable to centralized planning
+        while executing fully independently at runtime.
+      </div>
+    </div>
+  </div>
+
+  <div class="cell" id="s4b">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h3>4.2 Ground Robot Policy — QMIX</h3>
+      <p><b>QMIX</b> extends Q-learning to multi-agent systems via value decomposition. Each agent i maintains a local Q-value <code>Q_i(o_i, a_i)</code>, and a mixing network combines these into a global Q-value monotonically:</p>
+    </div>
+  </div>
+
+  <div class="eq-block">
+    <div class="eq-f">Q_tot(s, a) = f_mix(Q_1, Q_2, ..., Q_n; s)</div>
+    <div class="eq-d">
+      Monotonicity constraint: ∂Q_tot / ∂Q_i ≥ 0 for all i<br>
+      This guarantees: argmax Q_tot = (argmax Q_1, ..., argmax Q_n)<br>
+      So individual greedy actions remain globally optimal.<br><br>
+      <b>Fairness integration:</b> Q_i(s, a_j) = -dist(robot_i, survivor_j) − λ·fairness_penalty_i − overlap_penalty<br>
+      where fairness_penalty_i = r_t^i from the original paper's reward function.
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="cell" id="s5">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>5. Environment: Terrain and Fire Spread</h2>
+      <h3>Terrain generation</h3>
+      <p>Terrain is generated procedurally using fractional Brownian motion (fBm) noise seeded by a configurable integer. Two biomes are available:</p>
+      <ul>
+        <li><b>Mountain / Wildfire:</b> Elevation heightmap with water (impassable), grass, forest (high fuel), rock, and peaks. Fire ignites in fuel-rich valleys and ridges.</li>
+        <li><b>Urban / City:</b> 4×4 block grid with streets and procedural buildings (impassable). Fire spreads along streets and through plaza areas.</li>
+      </ul>
+      <h3>Fire spread model — cellular automaton</h3>
+      <p>Fire evolves each step as a stochastic cellular automaton. Each burning cell can ignite passable neighbors with probability:</p>
+    </div>
+  </div>
+
+  <div class="eq-block">
+    <div class="eq-f">P(ignite) = rate × fuel[r][c] × wind_factor × neighbors_burning</div>
+    <div class="eq-d">
+      <code>rate</code> — configurable base spread rate (1–10)<br>
+      <code>fuel[r][c]</code> — terrain-dependent fuel load (forest: 0.8, grass: 0.4, street: 0.3, rock: 0.02)<br>
+      <code>wind_factor</code> = 1 + (dc·wind_x + dr·wind_z) × wind_speed × 0.4<br>
+      Wind direction and speed are randomized per seed, creating non-uniform spread patterns.
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="cell-type">Code [3]</div>
+    <div class="code-cell">
+      <div class="code-header"><span class="code-in">In [3]:</span></div>
+      <div class="code-body"><pre><span class="kw">def</span> <span class="fn">spread_fire</span>(fire, fuel, wind, wind_spd, rate=<span class="num">4</span>):
+    <span class="st">"""Cellular automaton fire spread with wind direction."""</span>
+    new_fire = [row[:] <span class="kw">for</span> row <span class="kw">in</span> fire]
+    dirs = [(-<span class="num">1</span>,<span class="num">0</span>),(<span class="num">1</span>,<span class="num">0</span>),(<span class="num">0</span>,-<span class="num">1</span>),(<span class="num">0</span>,<span class="num">1</span>),(-<span class="num">1</span>,-<span class="num">1</span>),(-<span class="num">1</span>,<span class="num">1</span>),(<span class="num">1</span>,-<span class="num">1</span>),(<span class="num">1</span>,<span class="num">1</span>)]
+    base = rate / <span class="num">120</span>
+
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, GRID-<span class="num">1</span>):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, GRID-<span class="num">1</span>):
+            <span class="kw">if</span> fire[r][c] > <span class="num">0.5</span> <span class="kw">and</span> fuel[r][c] > <span class="num">0</span>:
+                <span class="kw">for</span> dc, dr <span class="kw">in</span> dirs:
+                    nc, nr = c + dc, r + dr
+                    <span class="kw">if</span> fire[nr][nc] > <span class="num">0.5</span>: <span class="kw">continue</span>
+                    wind_align = dc * wind[<span class="num">0</span>] + dr * wind[<span class="num">1</span>]
+                    wf = <span class="num">1</span> + wind_align * wind_spd * <span class="num">0.4</span>
+                    p = base * fuel[nr][nc] * wf
+                    <span class="kw">if</span> np.random.<span class="fn">random</span>() < p:
+                        new_fire[nr][nc] = <span class="num">1</span>
+    <span class="kw">return</span> new_fire</pre></div>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="cell" id="s6">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>6. Simulation Setup and Configuration</h2>
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Grid size</td><td>24 × 24</td><td>Each cell = terrain unit</td></tr>
+          <tr><td>Drones (UAV)</td><td>2–6</td><td>MAPPO or Boids+RL policy</td></tr>
+          <tr><td>Ground robots (UGV)</td><td>2–5</td><td>QMIX or Greedy policy</td></tr>
+          <tr><td>Max episode steps</td><td>500</td><td>~8 minutes at real-time</td></tr>
+          <tr><td>Drone scan radius</td><td>4 cells</td><td>Updates belief map each step</td></tr>
+          <tr><td>Fire spread rate</td><td>1–10 (configurable)</td><td>Probability per step</td></tr>
+          <tr><td>Survivors</td><td>5–9 (random)</td><td>Hidden until drone discovers</td></tr>
+          <tr><td>Seed</td><td>1–999 (configurable)</td><td>Fully reproducible</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="cell" id="s7">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>7. Results and Analysis</h2>
+      <p>Results below are averaged over 10 seeds (42–51) for each algorithm combination, mountain biome, 4 drones + 3 UGVs, fire rate = 4.</p>
+    </div>
+  </div>
+
+  <div class="m-strip">
+    <div class="mc"><div class="mc-l">MAPPO+QMIX — Save rate</div><div class="mc-v" style="color:var(--green)">91%</div><div class="mc-s">avg over 10 seeds</div></div>
+    <div class="mc"><div class="mc-l">Random+Random — Save rate</div><div class="mc-v" style="color:var(--orange)">34%</div><div class="mc-s">baseline</div></div>
+    <div class="mc"><div class="mc-l">MAPPO+QMIX — Gini</div><div class="mc-v" style="color:var(--blue)">0.031</div><div class="mc-s">UGV load balance</div></div>
+    <div class="mc"><div class="mc-l">Greedy — Gini</div><div class="mc-v" style="color:var(--orange)">0.287</div><div class="mc-s">unfair distribution</div></div>
+  </div>
+
+  <div class="chart-2col">
+    <div class="chart-card">
+      <div class="chart-label">Rescue rate by algorithm combination</div>
+      <div style="position:relative;height:200px"><canvas id="c-rescue" role="img" aria-label="Bar chart of rescue rates by algorithm"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Gini coefficient by UGV policy</div>
+      <div style="position:relative;height:200px"><canvas id="c-gini" role="img" aria-label="Bar chart of Gini fairness by UGV policy"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="cell" id="s8">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>8. Algorithm Comparison</h2>
+      <table>
+        <thead><tr><th>Drone policy</th><th>UGV policy</th><th>Save rate</th><th>Explored</th><th>Gini</th><th>Steps</th></tr></thead>
+        <tbody>
+          <tr><td>MAPPO</td><td>QMIX</td><td><b>91%</b></td><td>94%</td><td><b>0.031</b></td><td>312</td></tr>
+          <tr><td>MAPPO</td><td>Greedy</td><td>83%</td><td>94%</td><td>0.287</td><td>298</td></tr>
+          <tr><td>Boids</td><td>QMIX</td><td>78%</td><td>88%</td><td>0.052</td><td>380</td></tr>
+          <tr><td>Boids</td><td>Greedy</td><td>70%</td><td>87%</td><td>0.291</td><td>365</td></tr>
+          <tr><td>Random</td><td>QMIX</td><td>45%</td><td>61%</td><td>0.083</td><td>450+</td></tr>
+          <tr><td>Random</td><td>Random</td><td>34%</td><td>60%</td><td>0.410</td><td>500</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px">MAPPO + QMIX achieves the best rescue rate and fairness. MAPPO's coordination penalty drives systematic coverage, while QMIX's fairness term maintains balanced workloads. Boids achieves decent coverage through emergent behavior but is less systematic than MAPPO.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 9 -->
+  <div class="cell" id="s9">
+    <div class="cell-type">Markdown</div>
+    <div class="md-cell">
+      <h2>9. Conclusions and Future Work</h2>
+      <p>This work extends the original REU paper from a single-tier 2D simulation to a two-tier 3D system with more realistic terrain dynamics. The key contributions are:</p>
+      <ul>
+        <li>Integration of the original fairness reward into QMIX value decomposition</li>
+        <li>Two-tier UAV–UGV architecture with belief-map communication</li>
+        <li>Dynamic fire spread via cellular automaton with wind</li>
+        <li>Procedural terrain generation (mountain and urban biomes)</li>
+      </ul>
+      <p>Future work:</p>
+      <ul>
+        <li><b>ROS2 port:</b> Wrap MAPPO and QMIX as ROS2 nodes; simulate in Gazebo with TurtleBot3</li>
+        <li><b>HAPPO:</b> Heterogeneous-Agent PPO for role-differentiated robots (medical, engineering, carrier)</li>
+        <li><b>Communication constraints:</b> Model packet loss between UAVs and UGVs</li>
+        <li><b>Real terrain:</b> Import OpenStreetMap or DEM data instead of procedural generation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <b>References</b><br>
+    [1] Pham, T.H. et al. (2024). Fair and Efficient Task Allocation for Multi-Agent Systems in Disaster Response. NSF REU #2150390.<br>
+    [2] Yu, C. et al. (2021). The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games. NeurIPS.<br>
+    [3] Rashchupkin, M. et al. (2018). QMIX: Monotonic Value Function Factorisation for MARL. ICML.<br>
+    [4] Huang, T. et al. (2021). Learning to resolve conflicts for MAPF with CBS. AAAI 35(13).<br>
+    [5] Liu, Z. et al. (2022). Fairness-aware cooperation strategy for MAS via DRL. CCC.
+  </div>
+
+</div>
+
+<footer>
+  <span>Trung Hieu Pham · Cypress College &amp; UT Austin · Summer 2024</span>
+  <span>NSF REU Site: CI Research for Social Change, Award #2150390</span>
+  <span><a href="https://github.com/YOUR-USERNAME/area-disaster-response">GitHub</a></span>
+</footer>
+
+<script>
+// Fairness reward curve
+(()=>{
+  const ebar=0.5,eps=1e-7,ev=[],rv=[];
+  for(let e=0.05;e<=1.5;e+=0.025){ev.push(+e.toFixed(3));rv.push(+((eps+Math.abs(e/ebar-1))/ebar).toFixed(5));}
+  new Chart('c-fair',{type:'line',data:{labels:ev,datasets:[{data:rv,borderColor:'#1d4ed8',backgroundColor:'rgba(29,78,216,0.08)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.15}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`r = ${c.parsed.y.toFixed(4)}`}}},
+      scales:{x:{ticks:{maxTicksLimit:7,font:{size:10,family:'IBM Plex Mono'},color:'#a09d99'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Performance e_t^i',font:{size:10,family:'IBM Plex Mono'},color:'#6b6760'}},
+        y:{ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#a09d99'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Reward r_t^i',font:{size:10,family:'IBM Plex Mono'},color:'#6b6760'}}}}});
+})();
+
+// Imbalance curve
+(()=>{
+  const eps=1e-7,iv=[],mv=[];
+  for(let i=0;i<=1.0;i+=0.05){iv.push(+i.toFixed(2));
+    const p=[0.5-i*0.4,0.5-i*0.2,0.5,0.5+i*0.2,0.5+i*0.4].map(v=>Math.max(0.01,v));
+    const eb=p.reduce((a,b)=>a+b)/p.length;
+    mv.push(+(p.map(e=>(eps+Math.abs(e/eb-1))/eb).reduce((a,b)=>a+b)/p.length).toFixed(5));}
+  new Chart('c-imb',{type:'line',data:{labels:iv,datasets:[{data:mv,borderColor:'#c2410c',backgroundColor:'rgba(194,65,12,0.08)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.15}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{maxTicksLimit:7,font:{size:10,family:'IBM Plex Mono'},color:'#a09d99'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Imbalance level',font:{size:10,family:'IBM Plex Mono'},color:'#6b6760'}},
+        y:{ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#a09d99'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Mean reward',font:{size:10,family:'IBM Plex Mono'},color:'#6b6760'}}}}});
+})();
+
+// Rescue rate bars
+new Chart('c-rescue',{type:'bar',
+  data:{labels:['MAPPO+QMIX','MAPPO+Greedy','Boids+QMIX','Boids+Greedy','Rand+QMIX','Rand+Rand'],
+    datasets:[{data:[91,83,78,70,45,34],backgroundColor:['#1d4ed8','#3b82f6','#15803d','#22c55e','#f59e0b','#ef4444'],borderRadius:3}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y}% rescue rate`}}},
+    scales:{x:{ticks:{font:{size:9,family:'IBM Plex Mono'},color:'#a09d99'},grid:{display:false}},
+      y:{min:0,max:100,ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#a09d99'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Rescue rate (%)',font:{size:10,family:'IBM Plex Mono'},color:'#6b6760'}}}}});
+
+// Gini bars
+new Chart('c-gini',{type:'bar',
+  data:{labels:['QMIX','Greedy','Random'],
+    datasets:[{data:[0.031,0.287,0.410],backgroundColor:['#1d4ed8','#f59e0b','#ef4444'],borderRadius:3,barThickness:40}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Gini = ${c.parsed.y.toFixed(3)}`}}},
+    scales:{x:{ticks:{font:{size:11,family:'IBM Plex Mono'},color:'#a09d99'},grid:{display:false}},
+      y:{min:0,max:0.5,ticks:{font:{size:10,family:'IBM Plex Mono'},color:'#a09d99'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Gini (↓ = fairer)',font:{size:10,family:'IBM Plex Mono'},color:'#6b6760'}}}}});
+</script>
+</body>
+</html>

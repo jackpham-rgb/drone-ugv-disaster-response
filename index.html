@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Area Disaster Response — Research Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --border: #e2dfd8;
+  --border2: #c8c4bc;
+  --text: #1c1917;
+  --text2: #6b6760;
+  --text3: #a09d99;
+  --blue: #1d4ed8;
+  --blue-l: #eff6ff;
+  --blue-b: #bfdbfe;
+  --green: #15803d;
+  --green-l: #f0fdf4;
+  --orange: #c2410c;
+  --orange-l: #fff7ed;
+  --red: #b91c1c;
+  --serif: 'Source Serif 4', Georgia, serif;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh; }
+
+/* NAV */
+nav {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:0 48px; display:flex; align-items:center; gap:32px; height:56px;
+  position:sticky; top:0; z-index:100;
+}
+.nav-logo { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--text); text-decoration:none; }
+.nav-links { display:flex; gap:24px; margin-left:auto; }
+.nav-links a { font-size:13px; color:var(--text2); text-decoration:none; font-weight:400; transition:color 0.15s; }
+.nav-links a:hover { color:var(--text); }
+.nav-badge { font-family:var(--mono); font-size:10px; padding:3px 10px; border:1px solid var(--blue-b); background:var(--blue-l); color:var(--blue); border-radius:3px; }
+
+/* HERO */
+.hero { max-width:900px; margin:0 auto; padding:64px 48px 48px; }
+.hero-tag { font-family:var(--mono); font-size:11px; color:var(--text3); letter-spacing:0.08em; margin-bottom:14px; }
+.hero-tag span { background:var(--blue-l); color:var(--blue); border:1px solid var(--blue-b); padding:2px 8px; border-radius:2px; margin-right:6px; font-size:10px; }
+h1 { font-family:var(--serif); font-size:36px; font-weight:400; line-height:1.22; color:var(--text); margin-bottom:14px; letter-spacing:-0.3px; }
+h1 em { font-style:italic; }
+.byline { font-size:13px; color:var(--text2); margin-bottom:6px; line-height:1.7; }
+.byline b { color:var(--text); font-weight:500; }
+.abstract {
+  font-family:var(--serif); font-size:15px; font-style:italic; color:var(--text2);
+  line-height:1.8; max-width:720px; margin-top:20px; padding-top:20px;
+  border-top:1px solid var(--border);
+}
+
+/* MAIN GRID */
+.page { max-width:900px; margin:0 auto; padding:0 48px 80px; }
+.section-title { font-family:var(--serif); font-size:20px; font-weight:400; margin-bottom:20px; color:var(--text); padding-top:40px; border-top:1px solid var(--border); margin-top:40px; }
+
+/* CARD GRID */
+.card-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+.card {
+  background:var(--surface); border:1px solid var(--border); border-radius:6px;
+  padding:24px; text-decoration:none; color:inherit; display:block; transition:border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover { border-color:var(--border2); box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+.card.featured { grid-column:1/-1; display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center; }
+.card-tag { font-family:var(--mono); font-size:10px; letter-spacing:0.06em; color:var(--text3); margin-bottom:8px; text-transform:uppercase; }
+.card-title { font-family:var(--serif); font-size:18px; font-weight:400; margin-bottom:8px; color:var(--text); }
+.card-desc { font-size:13px; color:var(--text2); line-height:1.65; }
+.card-cta { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; color:var(--blue); margin-top:14px; }
+.card-cta:after { content:'→'; }
+.card-visual { background:var(--bg); border-radius:4px; padding:16px; font-family:var(--mono); font-size:10px; color:var(--text3); line-height:2.2; }
+.card-accent { width:3px; border-radius:3px; }
+
+/* ALGORITHM TABLE */
+.algo-table { width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13px; }
+.algo-table th { text-align:left; font-family:var(--mono); font-size:10px; color:var(--text3); letter-spacing:0.05em; padding:8px 12px; border-bottom:1px solid var(--border); font-weight:400; text-transform:uppercase; }
+.algo-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text2); line-height:1.5; }
+.algo-table td:first-child { font-family:var(--mono); font-size:11px; color:var(--text); font-weight:500; }
+.algo-table tr:last-child td { border-bottom:none; }
+.tag { display:inline-block; font-family:var(--mono); font-size:9px; padding:2px 7px; border-radius:2px; margin-right:4px; }
+.tag-new { background:var(--green-l); color:var(--green); }
+.tag-base { background:var(--blue-l); color:var(--blue); }
+.tag-orig { background:var(--orange-l); color:var(--orange); }
+
+/* EQUATION */
+.eq-block { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:0 4px 4px 0; padding:16px 20px; margin-bottom:20px; }
+.eq-formula { font-family:var(--mono); font-size:15px; color:var(--text); margin-bottom:8px; }
+.eq-desc { font-size:12px; color:var(--text2); line-height:1.9; }
+.eq-desc code { font-family:var(--mono); font-size:11px; background:var(--bg); padding:1px 5px; border-radius:2px; }
+
+/* METRICS STRIP */
+.metrics-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:32px; }
+.ms-cell { background:var(--surface); padding:16px 18px; }
+.ms-l { font-family:var(--mono); font-size:10px; color:var(--text3); margin-bottom:4px; }
+.ms-v { font-family:var(--serif); font-size:24px; font-weight:400; color:var(--text); }
+.ms-s { font-size:11px; color:var(--text3); margin-top:2px; }
+
+/* FOOTER */
+footer { border-top:1px solid var(--border); padding:24px 48px; font-size:12px; color:var(--text3); font-family:var(--mono); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; max-width:900px; margin:0 auto; }
+footer a { color:var(--blue); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Area Disaster Response</a>
+  <div class="nav-links">
+    <a href="index.html">Overview</a>
+    <a href="notebook.html">Notebook</a>
+    <a href="sim3d_v2.html">3D Simulation</a>
+    <a href="visualizations.html">Data Viz</a>
+    <a href="simulation_v3.html">2D Simulation</a>
+  </div>
+  <span class="nav-badge">NSF REU #2150390</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">
+    <span>Research</span>
+    <span>Multi-Agent RL</span>
+    Summer 2024 · University of Texas at Austin
+  </div>
+  <h1>Drone–UGV Cooperative Rescue:<br><em>Fair Task Allocation and Path Planning<br>for Disaster Response</em></h1>
+  <div class="byline">
+    <b>Trung Hieu Pham</b> — Cypress College &nbsp;·&nbsp;
+    Dr. Adam Thorpe — Center for Autonomy, UT Austin &nbsp;·&nbsp;
+    Dr. Ufuk Topcu — Dept. of Aerospace Engineering, UT Austin
+  </div>
+  <p class="abstract">
+    This project develops a two-tier cooperative multi-agent system for autonomous disaster response.
+    Unmanned aerial vehicles (UAVs) using MAPPO perform distributed area exploration, writing
+    discoveries to a shared belief map that guides ground robots (UGVs) using QMIX with an
+    embedded fairness reward toward survivor rescue. A cellular automaton models dynamic fire spread.
+    The system is evaluated across procedurally generated mountain and urban terrains.
+  </p>
+</div>
+
+<div class="page">
+
+  <!-- QUICK LINKS -->
+  <div class="card-grid">
+    <a class="card featured" href="sim3d_v2.html">
+      <div>
+        <div class="card-tag">Interactive</div>
+        <div class="card-title">3D Drone–UGV Simulation</div>
+        <div class="card-desc">Real-time 3D simulation of UAV scouts and ground robots operating in procedurally generated terrain. Observe MAPPO drone coordination and QMIX-guided rescue operations as fire spreads dynamically. Switch between mountain wildfire and urban disaster scenarios.</div>
+        <div class="card-cta">Launch simulation</div>
+      </div>
+      <div class="card-visual">
+        scene: mountain_wildfire<br>
+        drones: 4 × MAPPO<br>
+        ugvs:   3 × QMIX<br>
+        seed:   42<br>
+        fire_spread: cellular_automaton<br>
+        wind: [0.87, 0.31] × 1.4<br>
+        ──────────────────<br>
+        survivors: 8<br>
+        step: 0 / 600<br>
+        belief_map: 0% explored
+      </div>
+    </a>
+
+    <a class="card" href="notebook.html">
+      <div class="card-tag">Research Notebook</div>
+      <div class="card-title">Theory & Implementation</div>
+      <div class="card-desc">Step-by-step walkthrough of the MDP formulation, MAPPO and QMIX algorithms, fairness reward derivation, terrain generation, and experimental results.</div>
+      <div class="card-cta">Open notebook</div>
+    </a>
+
+    <a class="card" href="visualizations.html">
+      <div class="card-tag">Data Visualization</div>
+      <div class="card-title">Performance Analysis</div>
+      <div class="card-desc">Interactive charts comparing algorithm performance across episodes. Fairness reward curves, Gini coefficient trends, scalability analysis.</div>
+      <div class="card-cta">View charts</div>
+    </a>
+  </div>
+
+  <!-- METRICS -->
+  <div class="section-title">Key results (seed 42, mountain, 4 UAV + 3 UGV)</div>
+  <div class="metrics-strip">
+    <div class="ms-cell"><div class="ms-l">SURVIVAL RATE</div><div class="ms-v">91%</div><div class="ms-s">MAPPO + QMIX</div></div>
+    <div class="ms-cell"><div class="ms-l">MAP COVERAGE</div><div class="ms-v">94%</div><div class="ms-s">by episode end</div></div>
+    <div class="ms-cell"><div class="ms-l">GINI FAIRNESS</div><div class="ms-v">0.031</div><div class="ms-s">UGV load balance</div></div>
+    <div class="ms-cell"><div class="ms-l">VS GREEDY</div><div class="ms-v">+38%</div><div class="ms-s">rescue rate</div></div>
+  </div>
+
+  <!-- ALGORITHM TABLE -->
+  <div class="section-title">Algorithm architecture</div>
+  <table class="algo-table">
+    <thead><tr><th>Component</th><th>Algorithm</th><th>Role</th><th>Key mechanism</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>UAV policy</td>
+        <td>MAPPO <span class="tag tag-new">2024</span></td>
+        <td>Exploration & discovery</td>
+        <td>Centralized critic, decentralized actors. Coordination penalty prevents clustering without explicit communication.</td>
+      </tr>
+      <tr>
+        <td>UAV alt. policy</td>
+        <td>Boids + RL <span class="tag tag-new">2024</span></td>
+        <td>Emergent flocking</td>
+        <td>Separation, alignment, cohesion behavioral priors bias action selection. No central planner required.</td>
+      </tr>
+      <tr>
+        <td>UGV policy</td>
+        <td>QMIX <span class="tag tag-new">2018→</span></td>
+        <td>Navigation & rescue</td>
+        <td>Value decomposition: global Q = monotone mix of per-agent Q_i. Fairness term embedded in local Q-value.</td>
+      </tr>
+      <tr>
+        <td>Fairness reward</td>
+        <td>FE reward <span class="tag tag-orig">Original paper</span></td>
+        <td>Load balancing</td>
+        <td>r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t — carried forward from REU paper into QMIX Q-value.</td>
+      </tr>
+      <tr>
+        <td>Pathfinding</td>
+        <td>A* (terrain-weighted)</td>
+        <td>Collision avoidance</td>
+        <td>Movement cost varies by terrain type. UGVs route around fire. Drones fly at fixed altitude.</td>
+      </tr>
+      <tr>
+        <td>Environment</td>
+        <td>Cellular automaton <span class="tag tag-new">New</span></td>
+        <td>Fire spread model</td>
+        <td>P(ignite) = rate × fuel × wind_factor × neighbor_state. Wind direction randomized per seed.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- FAIRNESS EQUATION -->
+  <div class="section-title">Fairness reward — connection to original paper</div>
+  <div class="eq-block">
+    <div class="eq-formula">r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t</div>
+    <div class="eq-desc">
+      <code>r_t^i</code> — reward for agent i at timestep t &nbsp;·&nbsp;
+      <code>ε = 1e-7</code> — numerical stability constant<br>
+      <code>e_t^i</code> — performance of agent i (inverse distance to nearest assigned target)<br>
+      <code>ē_t</code> — mean performance across all n agents at time t<br><br>
+      In the original paper (2024), this reward drove FE-MADDPG policy gradients.
+      In this system, it is embedded directly into the QMIX per-agent Q-value function,
+      combining value decomposition with the same fairness objective — a novel integration.
+    </div>
+  </div>
+
+  <!-- DIFFERENCE FROM ORIGINAL -->
+  <div class="section-title">How this differs from the original REU paper</div>
+  <table class="algo-table">
+    <thead><tr><th>Aspect</th><th>Original paper (2024)</th><th>This system</th></tr></thead>
+    <tbody>
+      <tr><td>Environment</td><td>2D hex grid, static obstacles</td><td>3D terrain, dynamic fire spread</td></tr>
+      <tr><td>Agent types</td><td>Single-tier, all robots do all tasks</td><td>Two-tier: UAV scouts + UGV rescuers</td></tr>
+      <tr><td>Communication</td><td>Shared environment state</td><td>Shared belief map (UAV → UGV)</td></tr>
+      <tr><td>Drone policy</td><td>Not present</td><td>MAPPO with coordination penalty</td></tr>
+      <tr><td>Ground policy</td><td>FE-MADDPG (off-policy)</td><td>QMIX (value decomposition, on-policy)</td></tr>
+      <tr><td>Pathfinding</td><td>CBS (conflict-based search)</td><td>Terrain-weighted A*</td></tr>
+      <tr><td>Fairness</td><td>Policy gradient reward</td><td>Embedded in Q-value function</td></tr>
+      <tr><td>Terrain</td><td>Uniform grid</td><td>Procedural biomes (mountain / city)</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<footer>
+  <span>Trung Hieu Pham · Cypress College &amp; UT Austin · Summer 2024</span>
+  <span>NSF REU Site: CI Research for Social Change, Award #2150390</span>
+  <span><a href="https://github.com/YOUR-USERNAME/area-disaster-response">GitHub Repository</a></span>
+</footer>
+
+</body>
+</html>
