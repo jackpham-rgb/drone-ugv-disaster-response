@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Area Disaster Response — 3D Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--panel:#ffffff;--panel2:#f5f6f8;--border:#dde1e7;--border2:#b8bec8;
+  --text:#1a2030;--text2:#5a6478;--text3:#9aa0b0;
+  --blue:#1d4ed8;--blue-l:#eff6ff;
+  --green:#15803d;--green-l:#f0fdf4;
+  --orange:#c2410c;--orange-l:#fff7ed;
+  --red:#b91c1c;--red-l:#fef2f2;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --serif:'Source Serif 4',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* NAV */
+nav{background:var(--panel);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.nlogo{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--text);text-decoration:none;}
+.nlinks{display:flex;gap:18px;margin-left:auto;}
+.nlinks a{font-size:12px;color:var(--text2);text-decoration:none;transition:color 0.15s;}
+.nlinks a:hover,.nlinks a.active{color:var(--blue);}
+.nlinks a.active{font-weight:500;}
+
+/* LAYOUT */
+#main{display:grid;grid-template-columns:230px 1fr 265px;flex:1;overflow:hidden;}
+
+/* SIDE PANELS */
+.lpanel,.rpanel{background:var(--panel);display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);}
+.rpanel{border-right:none;border-left:1px solid var(--border);}
+.sh{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--text3);padding:10px 14px 7px;border-bottom:1px solid var(--border);flex-shrink:0;text-transform:uppercase;background:var(--panel2);}
+
+/* CONFIG */
+.cfg-sec{padding:10px 13px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.cfg-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.cfg-row:last-child{margin-bottom:0;}
+.cfg-l{font-family:var(--mono);font-size:10px;color:var(--text2);}
+.cfg-v{font-family:var(--mono);font-size:11px;color:var(--text);font-weight:500;min-width:20px;text-align:right;}
+select{background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:3px 6px;border-radius:3px;cursor:pointer;width:115px;}
+input[type=range]{-webkit-appearance:none;height:2px;background:var(--border2);border-radius:2px;cursor:pointer;outline:none;width:82px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;background:var(--blue);border-radius:50%;box-shadow:0 0 3px rgba(29,78,216,0.4);}
+.grp-btns{display:flex;gap:3px;}
+.gb{flex:1;background:none;border:1px solid var(--border2);color:var(--text2);font-family:var(--mono);font-size:9px;padding:4px 2px;border-radius:3px;cursor:pointer;transition:all 0.15s;text-align:center;}
+.gb:hover,.gb.on{border-color:var(--blue);color:var(--blue);background:var(--blue-l);}
+
+/* ROSTER */
+#roster{flex:1;overflow-y:auto;padding:7px;}
+#roster::-webkit-scrollbar{width:3px;}
+#roster::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.ac{border:1px solid var(--border);border-radius:5px;padding:8px 9px;margin-bottom:5px;position:relative;overflow:hidden;background:var(--panel);transition:border-color 0.2s;}
+.ac.act{background:var(--blue-l);border-color:rgba(29,78,216,0.25);}
+.acb{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.act-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;padding-left:9px;}
+.a-ico{font-size:14px;}
+.a-name{font-family:var(--mono);font-size:11px;font-weight:500;}
+.a-role{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:1px;}
+.a-st{margin-left:auto;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;}
+.si{background:#f0f9ff;color:#0369a1;}
+.sm{background:var(--green-l);color:var(--green);}
+.sn{background:var(--orange-l);color:var(--orange);}
+.sw{background:#fef3c7;color:#92400e;}
+.sf{background:var(--red-l);color:var(--red);}
+.apb{height:2px;background:var(--border);border-radius:1px;margin:3px 9px 3px;}
+.apbf{height:2px;border-radius:1px;transition:width 0.4s;}
+.ainf{font-family:var(--mono);font-size:8px;color:var(--text3);padding-left:9px;}
+.anums{display:flex;gap:8px;padding-left:9px;margin-top:3px;}
+.anum{font-family:var(--mono);font-size:8px;color:var(--text2);}
+.anum b{color:var(--text);}
+
+/* ALGO */
+#algo-sec{padding:9px 11px;border-top:1px solid var(--border);flex-shrink:0;background:var(--panel2);}
+.algo-hd{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px;letter-spacing:2px;}
+
+/* CENTER */
+#center{display:flex;flex-direction:column;}
+#cw{flex:1;position:relative;overflow:hidden;background:#d4e4f0;}
+#simCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;}
+#simCanvas:active{cursor:grabbing;}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(240,242,245,0.92);z-index:10;backdrop-filter:blur(4px);}
+#overlay h2{font-family:var(--serif);font-size:26px;color:var(--text);margin-bottom:8px;}
+#overlay p{font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:3px;}
+
+/* CTRL */
+#ctrl{background:var(--panel);border-top:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:9px;flex-shrink:0;flex-wrap:wrap;box-shadow:0 -1px 4px rgba(0,0,0,0.04);}
+.btn{background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:6px 13px;border-radius:3px;cursor:pointer;transition:all 0.15s;}
+.btn:hover{border-color:var(--blue);color:var(--blue);}
+.btn.pri{background:var(--blue-l);border-color:var(--blue);color:var(--blue);}
+.btn.dan{background:var(--red-l);border-color:var(--red);color:var(--red);}
+.ep-wrap{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.ep-l{font-family:var(--mono);font-size:10px;color:var(--text2);}
+.ep-v{font-family:var(--mono);font-size:12px;color:var(--text);font-weight:600;}
+.ep-bar-w{width:60px;height:3px;background:var(--border);border-radius:2px;}
+.ep-bar-f{height:3px;background:var(--blue);border-radius:2px;width:0%;transition:width 0.3s;}
+.spd-w{display:flex;align-items:center;gap:7px;}
+
+/* RIGHT */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);flex-shrink:0;}
+.mc{background:var(--panel);padding:10px 12px;}
+.mc-l{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:3px;}
+.mc-v{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--text);}
+.mc-s{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:2px;}
+.mblk{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.mbl{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:6px;}
+canvas.mini{width:100%;height:60px;display:block;}
+#bmap-wrap{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#bmap{width:100%;height:90px;display:block;border-radius:3px;border:1px solid var(--border);}
+.bmap-l{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px;}
+
+/* LEGEND */
+.leg{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;flex-wrap:wrap;gap:5px;}
+.lp{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid;display:flex;align-items:center;gap:4px;}
+
+/* LOG */
+#elog{flex:1;overflow-y:auto;padding:7px;}
+#elog::-webkit-scrollbar{width:2px;}
+#elog::-webkit-scrollbar-thumb{background:var(--border2);}
+.le{font-family:var(--mono);font-size:9px;padding:3px 7px;border-left:2px solid var(--border);margin-bottom:2px;line-height:1.5;color:var(--text2);}
+.lt{color:var(--text3);}
+.li{border-color:#3b82f6;}.la{border-color:#f97316;}.ld{border-color:#22c55e;}.lf{border-color:#ef4444;}.lc{border-color:#8b5cf6;}
+
+/* REPORT */
+#report{display:none;position:fixed;inset:0;z-index:100;background:rgba(26,32,48,0.5);align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#report.show{display:flex;}
+#rbox{background:var(--panel);border:1px solid var(--border2);border-radius:8px;width:680px;max-height:88vh;overflow-y:auto;padding:32px 36px;box-shadow:0 8px 32px rgba(0,0,0,0.15);}
+#rbox h2{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:4px;}
+.rsub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:24px;}
+.rr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.rmc{background:var(--panel2);border-radius:5px;padding:12px 14px;border:1px solid var(--border);}
+.rmc-l{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:4px;}
+.rmc-v{font-family:var(--serif);font-size:22px;font-weight:600;}
+.rgrade-wrap{text-align:center;margin:16px 0;padding:18px;border-radius:6px;}
+.rgrade{font-family:var(--serif);font-size:52px;font-weight:600;display:block;}
+.rgrade-l{font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:6px;}
+.rtab{width:100%;border-collapse:collapse;margin-bottom:16px;}
+.rtab th{text-align:left;font-family:var(--mono);font-size:9px;color:var(--text3);padding:6px 10px;border-bottom:1px solid var(--border);font-weight:400;text-transform:uppercase;}
+.rtab td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);}
+.rtab td:first-child{font-family:var(--mono);font-size:11px;color:var(--text);}
+.rtab tr:last-child td{border-bottom:none;}
+.rnotes{font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.9;border-top:1px solid var(--border);padding-top:14px;margin-top:8px;}
+.rnotes b{color:var(--text);}
+.r-btn{background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:10px;padding:7px 18px;border-radius:3px;cursor:pointer;margin-top:14px;margin-right:8px;transition:all 0.15s;}
+.r-btn:hover{border-color:var(--blue);color:var(--blue);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nlogo" href="index.html">Area Disaster Response</a>
+  <div class="nlinks">
+    <a href="index.html">Overview</a>
+    <a href="notebook.html">Notebook</a>
+    <a href="sim3d_v2.html" class="active">3D Simulation</a>
+    <a href="visualizations.html">Data Viz</a>
+  </div>
+</nav>
+
+<div id="main">
+
+<!-- LEFT -->
+<div class="lpanel">
+  <div class="sh">// Configuration</div>
+  <div class="cfg-sec">
+    <div class="cfg-row"><span class="cfg-l">Terrain</span>
+      <select id="biome"><option value="mountain">Mountain / Wildfire</option><option value="city">Urban / City</option></select></div>
+    <div class="cfg-row"><span class="cfg-l">Seed</span>
+      <input type="range" id="seed-sl" min="1" max="999" value="42">
+      <span class="cfg-v" id="seed-v">42</span></div>
+    <div class="cfg-row"><span class="cfg-l">Drones (UAV)</span>
+      <input type="range" id="n-dr" min="2" max="6" value="4">
+      <span class="cfg-v" id="n-dr-v">4</span></div>
+    <div class="cfg-row"><span class="cfg-l">Ground robots</span>
+      <input type="range" id="n-ug" min="2" max="5" value="3">
+      <span class="cfg-v" id="n-ug-v">3</span></div>
+    <div class="cfg-row"><span class="cfg-l">Fire trucks</span>
+      <input type="range" id="n-ft" min="0" max="4" value="2">
+      <span class="cfg-v" id="n-ft-v">2</span></div>
+    <div class="cfg-row"><span class="cfg-l">Fire rate</span>
+      <input type="range" id="fire-r" min="1" max="10" value="4">
+      <span class="cfg-v" id="fire-r-v">4</span></div>
+    <div class="cfg-row"><span class="cfg-l">Spawn</span>
+      <div class="grp-btns" style="width:112px">
+        <button class="gb on" id="sp-rand" onclick="setSpawn('random',this)">Random</button>
+        <button class="gb" id="sp-stat" onclick="setSpawn('station',this)">Station</button>
+      </div></div>
+  </div>
+  <div class="sh">// UAV Policy</div>
+  <div class="cfg-sec">
+    <div class="grp-btns">
+      <button class="gb on" data-alg="mappo" onclick="setAlgo('drone',this)">MAPPO</button>
+      <button class="gb" data-alg="boids" onclick="setAlgo('drone',this)">Boids</button>
+      <button class="gb" data-alg="random" onclick="setAlgo('drone',this)">Random</button>
+    </div>
+  </div>
+  <div class="sh">// UGV + Truck Policy</div>
+  <div class="cfg-sec">
+    <div class="grp-btns">
+      <button class="gb on" data-alg="qmix" onclick="setAlgo('ugv',this)">QMIX</button>
+      <button class="gb" data-alg="greedy" onclick="setAlgo('ugv',this)">Greedy</button>
+      <button class="gb" data-alg="random" onclick="setAlgo('ugv',this)">Random</button>
+    </div>
+  </div>
+  <div class="sh">// Agents</div>
+  <div id="roster"></div>
+</div>
+
+<!-- CENTER -->
+<div id="center">
+  <div id="cw">
+    <canvas id="simCanvas"></canvas>
+    <div id="overlay">
+      <h2>Area Disaster Response</h2>
+      <p>Isometric 3D · Drone–UGV–FireTruck Cooperative Rescue</p>
+      <p>MAPPO scouts + QMIX robots + fire suppression</p>
+      <p style="margin-top:8px;color:var(--text3)">Drag to rotate · Scroll to zoom · Configure left, then PLAY</p>
+    </div>
+  </div>
+  <div id="ctrl">
+    <button class="btn pri" id="bplay">▶ Play</button>
+    <button class="btn" id="bstep">⏭ Step</button>
+    <button class="btn" id="bpause" style="display:none">⏸ Pause</button>
+    <button class="btn dan" id="breset">↺ Reset</button>
+    <button class="btn" id="breport">📋 Report</button>
+    <div class="ep-wrap">
+      <div class="ep-l">Step</div>
+      <div class="ep-v" id="cstep">0</div>
+      <div class="ep-bar-w"><div class="ep-bar-f" id="epbar"></div></div>
+    </div>
+    <div class="spd-w">
+      <div class="ep-l">Speed</div>
+      <input type="range" id="spd" min="1" max="10" value="4">
+      <div class="ep-l" id="spdv">4×</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="rpanel">
+  <div class="sh">// Metrics</div>
+  <div class="mgrid">
+    <div class="mc"><div class="mc-l">SAVED</div><div class="mc-v" style="color:var(--green)" id="m-sv">0</div><div class="mc-s">survivors</div></div>
+    <div class="mc"><div class="mc-l">FIRE</div><div class="mc-v" style="color:var(--red)" id="m-fi">0%</div><div class="mc-s">coverage</div></div>
+    <div class="mc"><div class="mc-l">EXPLORED</div><div class="mc-v" style="color:var(--blue)" id="m-ex">0%</div><div class="mc-s">map coverage</div></div>
+    <div class="mc"><div class="mc-l">HANDOFFS</div><div class="mc-v" style="color:#7c3aed" id="m-co">0</div><div class="mc-s">UAV→UGV</div></div>
+    <div class="mc"><div class="mc-l">SUPPRESSED</div><div class="mc-v" style="color:#ea580c" id="m-sup">0</div><div class="mc-s">fire cells</div></div>
+    <div class="mc"><div class="mc-l">LOST</div><div class="mc-v" style="color:var(--red)" id="m-lost">0</div><div class="mc-s">to fire</div></div>
+  </div>
+  <div class="mblk">
+    <div class="mbl">// Explore % vs Fire % over time</div>
+    <canvas class="mini" id="ch-prog" height="60"></canvas>
+  </div>
+  <div id="bmap-wrap">
+    <div class="bmap-l">// Drone Belief Map</div>
+    <canvas id="bmap" height="90"></canvas>
+  </div>
+  <div class="leg">
+    <div class="lp" style="background:#fef9c3;border-color:#d97706;color:#92400e">🟡 Undiscovered</div>
+    <div class="lp" style="background:var(--green-l);border-color:var(--green);color:var(--green)">🟢 Rescued</div>
+    <div class="lp" style="background:var(--red-l);border-color:var(--red);color:var(--red)">🔴 Lost</div>
+    <div class="lp" style="background:#fff;border-color:#666;color:#444">🚁 Drone</div>
+    <div class="lp" style="background:#fff;border-color:#666;color:#444">🚗 UGV</div>
+    <div class="lp" style="background:#fff;border-color:#666;color:#444">🚒 FireTruck</div>
+  </div>
+  <div class="sh">// Event Log</div>
+  <div id="elog"></div>
+</div>
+</div>
+
+<!-- REPORT -->
+<div id="report">
+  <div id="rbox">
+    <h2>Simulation Report</h2>
+    <div class="rsub" id="rep-sub"></div>
+    <div class="rr" id="rep-metrics"></div>
+    <div class="rgrade-wrap" id="rep-grade"></div>
+    <table class="rtab">
+      <thead><tr><th>Agent</th><th>Type</th><th>Policy</th><th>Performance</th><th>Distance</th></tr></thead>
+      <tbody id="rep-table"></tbody>
+    </table>
+    <div class="rnotes" id="rep-notes"></div>
+    <button class="r-btn" onclick="document.getElementById('report').classList.remove('show')">Close</button>
+    <button class="r-btn" onclick="resetSim()">New Simulation</button>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   Area Disaster Response — 3D Isometric Simulation
+   Agents: UAV Drones (MAPPO), UGV Ground Robots (QMIX), Fire Trucks
+   Victim colors: gold/yellow flashing = undiscovered,
+                  green = rescued, maroon = lost to fire
+   Rotation: mouse drag
+   Background: bright daylight terrain
+   ================================================================ */
+
+// ── RNG ──────────────────────────────────────────────────
+class RNG{
+  constructor(s=42){this.s=s>>>0;}
+  next(){this.s=(Math.imul(1664525,this.s)+1013904223)>>>0;return this.s/4294967296;}
+  int(a,b){return a+Math.floor(this.next()*(b-a));}
+  float(a=0,b=1){return a+this.next()*(b-a);}
+  choose(a){return a[this.int(0,a.length)];}
+}
+
+// ── NOISE ─────────────────────────────────────────────────
+function hash(n,s=0){let h=(n^s)>>>0;h=Math.imul(h,0x45d9f3b)>>>0;h=(h^(h>>>16))>>>0;h=Math.imul(h,0x45d9f3b)>>>0;return((h^(h>>>16))>>>0)/4294967296;}
+function noise2(x,y,s=0){
+  const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi;
+  const u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);
+  return hash(xi+yi*57,s)+(hash(xi+1+yi*57,s)-hash(xi+yi*57,s))*u
+        +(hash(xi+(yi+1)*57,s)-hash(xi+yi*57,s))*v
+        +(hash(xi+1+(yi+1)*57,s)-hash(xi+1+yi*57,s)-hash(xi+(yi+1)*57,s)+hash(xi+yi*57,s))*u*v;
+}
+function fbm(x,y,s=0,oct=4){let v=0,a=0.5,f=1,mx=0;for(let i=0;i<oct;i++){v+=noise2(x*f,y*f,s+i*997)*a;mx+=a;a*=0.5;f*=2.2;}return v/mx;}
+
+// ── CONSTANTS ─────────────────────────────────────────────
+const GRID=22, MAX_STEPS=500;
+const B_UNK=0,B_CLR=1,B_SRV=2,B_FIRE=3,B_RESC=4,B_WALL=5;
+
+// ── CONFIG ────────────────────────────────────────────────
+let CFG={biome:'mountain',seed:42,nDrones:4,nUGV:3,nFT:2,fireRate:4,spawn:'random',droneAlgo:'mappo',ugvAlgo:'qmix'};
+
+// ── STATE ─────────────────────────────────────────────────
+let rng,terrain=[],fire=[],belief=[],fuel=[];
+let drones=[],ugvs=[],firetrucks=[],survivors=[];
+let step=0,running=false,tid=null;
+let collabs=0,saved=0,suppressed=0,lost=0,totalSv=0;
+let explHist=[],fireHist=[];
+let wind=[1,0.4],windSpd=1.0;
+
+// ── CANVAS + ISO ──────────────────────────────────────────
+const canvas=document.getElementById('simCanvas');
+const ctx=canvas.getContext('2d');
+
+// Rotation state
+let camAngle=0; // 0..3 (four 90° increments) — or smooth
+let isDragging=false,lastMX=0;
+let camRot=0.3; // radians, smooth rotation
+let camZoom=1.0;
+
+const TW=28,TH=14; // tile width/height for iso
+
+function iso(col,row,h){
+  // Rotatable isometric projection
+  const x=(col-row)*Math.cos(camRot)-(col+row)*Math.sin(camRot)*0.5;
+  const y=(col+row)*Math.cos(camRot)*0.5+(col-row)*Math.sin(camRot)-h*0.55;
+  return[canvas.width/2+x*TW/2*camZoom, canvas.height*0.45+y*TH/2*camZoom];
+}
+
+function resizeCanvas(){
+  const cw=document.getElementById('cw');
+  canvas.width=cw.clientWidth;canvas.height=cw.clientHeight;
+}
+window.addEventListener('resize',()=>{resizeCanvas();render();});
+
+// Mouse rotation
+canvas.addEventListener('mousedown',e=>{isDragging=true;lastMX=e.clientX;});
+window.addEventListener('mousemove',e=>{
+  if(!isDragging)return;
+  const dx=e.clientX-lastMX;
+  camRot+=dx*0.008;
+  lastMX=e.clientX;
+  render();
+});
+window.addEventListener('mouseup',()=>isDragging=false);
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  camZoom=Math.max(0.4,Math.min(2.0,camZoom-e.deltaY*0.001));
+  render();
+},{passive:false});
+
+// ── TERRAIN ──────────────────────────────────────────────
+function genTerrain(){
+  terrain=[];fire=[];belief=[];fuel=[];
+  const s=CFG.seed;
+  for(let r=0;r<GRID;r++){
+    terrain[r]=[];fire[r]=[];belief[r]=[];fuel[r]=[];
+    for(let c=0;c<GRID;c++){
+      let h=0,t='clear',f=0,pass=true;
+      if(CFG.biome==='mountain'){
+        h=Math.max(0,fbm(c/GRID*3.5,r/GRID*3.5,s)*8+fbm(c/GRID*8,r/GRID*8,s+51)*2);
+        t=h<2?'water':h<4?'grass':h<6?'forest':h<8?'rock':'peak';
+        f=t==='forest'?0.8:t==='grass'?0.4:t==='water'?0.05:0.02;
+        pass=t!=='peak'&&t!=='water';
+      } else {
+        const isStreet=(c%4===0||r%4===0);
+        if(!isStreet&&noise2(Math.floor(c/4)*0.7,Math.floor(r/4)*0.7,s)>0.25){
+          h=3+noise2(c*0.3,r*0.3,s+7)*5;t='building';f=0;pass=false;
+        } else {h=0;t=isStreet?'street':'plaza';f=0.35;}
+      }
+      // Border walls
+      if(r===0||r===GRID-1||c===0||c===GRID-1){pass=false;t='border';}
+      terrain[r][c]={h,type:t,passable:pass};
+      fire[r][c]=0;belief[r][c]=B_UNK;fuel[r][c]=f;
+    }
+  }
+  // Clear cross for pathing
+  const mid=Math.floor(GRID/2);
+  for(let c=1;c<GRID-1;c++) if(!terrain[mid][c].passable&&terrain[mid][c].type!=='building')terrain[mid][c]={...terrain[mid][c],passable:true,type:'grass'};
+
+  // Initial fires
+  for(let i=0;i<rng.int(2,4);i++){
+    let c,r,t=0;
+    do{c=rng.int(4,GRID-4);r=rng.int(4,GRID-4);t++;}
+    while((!terrain[r][c].passable||fuel[r][c]<0.1)&&t<50);
+    if(t<50){fire[r][c]=1;belief[r][c]=B_FIRE;}
+  }
+
+  // Survivors
+  survivors=[];
+  const ns=rng.int(5,9);
+  for(let i=0;i<ns;i++){
+    let c,r,t=0;
+    do{c=rng.int(2,GRID-2);r=rng.int(2,GRID-2);t++;}
+    while((!terrain[r][c].passable||fire[r][c]>0)&&t<100);
+    survivors.push({id:i,col:c,row:r,h:terrain[r][c]?.h||0,status:'unknown',assignedTo:null});
+  }
+  totalSv=survivors.length;
+}
+
+// ── SPAWN AGENTS ──────────────────────────────────────────
+const D_COLS=['#2563eb','#7c3aed','#0891b2','#059669','#1d4ed8','#6d28d9'];
+const U_COLS=['#ea580c','#16a34a','#ca8a04','#9333ea','#0284c7','#be123c'];
+const F_COLS=['#dc2626','#b91c1c','#7f1d1d','#ef4444'];
+
+function spawnAgents(){
+  drones=[];ugvs=[];firetrucks=[];
+  const mc=Math.floor(GRID/2),mr=Math.floor(GRID/2);
+  function place(i,n,offset){
+    let c,r,t=0;
+    if(CFG.spawn==='station'){c=mc+(i-Math.floor(n/2));r=mr+offset;}
+    else do{c=rng.int(2,GRID-2);r=rng.int(2,GRID-2);t++;}while(!terrain[r]?.[c]?.passable&&t<60);
+    return[c,r];
+  }
+  for(let i=0;i<CFG.nDrones;i++){
+    const[c,r]=place(i,CFG.nDrones,-3);
+    drones.push({id:i,col:c,row:r,h:terrain[r]?.[c]?.h||0,tc:c,tr:r,
+      color:D_COLS[i%D_COLS.length],status:'idle',explored:0,handoffs:0,
+      visitMask:new Uint8Array(GRID*GRID),vx:0,vz:0});
+  }
+  for(let i=0;i<CFG.nUGV;i++){
+    const[c,r]=place(i,CFG.nUGV,0);
+    ugvs.push({id:i,col:c,row:r,h:terrain[r]?.[c]?.h||0,tc:c,tr:r,
+      color:U_COLS[i%U_COLS.length],status:'idle',
+      target:null,path:[],pathIdx:0,rescued:0,dist:0});
+  }
+  for(let i=0;i<CFG.nFT;i++){
+    const[c,r]=place(i,CFG.nFT,2);
+    firetrucks.push({id:i,col:c,row:r,h:terrain[r]?.[c]?.h||0,tc:c,tr:r,
+      color:F_COLS[i%F_COLS.length],status:'idle',
+      targetFire:null,path:[],pathIdx:0,suppressed:0,dist:0});
+  }
+}
+
+// ── BELIEF / SCAN ─────────────────────────────────────────
+function droneScans(d){
+  const R=4;
+  for(let dr=-R;dr<=R;dr++)for(let dc=-R;dc<=R;dc++){
+    if(dr*dr+dc*dc>R*R+1)continue;
+    const nr=d.row+dr,nc=d.col+dc;
+    if(nr<0||nr>=GRID||nc<0||nc>=GRID)continue;
+    if(belief[nr][nc]===B_UNK){
+      if(fire[nr][nc]>0.5) belief[nr][nc]=B_FIRE;
+      else {
+        const sv=survivors.find(s=>s.col===nc&&s.row===nr&&s.status==='unknown');
+        if(sv){belief[nr][nc]=B_SRV;sv.status='discovered';d.handoffs++;collabs++;
+          document.getElementById('m-co').textContent=collabs;
+          log('info',`🔍 Drone ${d.id} found survivor #${sv.id}`);
+        } else belief[nr][nc]=B_CLR;
+      }
+    }
+    if(!d.visitMask[nr*GRID+nc]){d.visitMask[nr*GRID+nc]=1;d.explored++;}
+  }
+}
+
+// ── DRONE ACTIONS ─────────────────────────────────────────
+function droneAction(d){
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+  if(CFG.droneAlgo==='random'){
+    const opts=dirs.map(([dr,dc])=>({nc:d.col+dc,nr:d.row+dr})).filter(({nc,nr})=>nc>0&&nc<GRID-1&&nr>0&&nr<GRID-1&&!fire[nr][nc]);
+    return opts.length?rng.choose(opts):{nc:d.col,nr:d.row};
+  }
+  let best=null,bestS=-Infinity;
+  for(const[dr,dc] of dirs){
+    const nc=d.col+dc,nr=d.row+dr;
+    if(nc<=0||nc>=GRID-1||nr<=0||nr>=GRID-1)continue;
+    if(fire[nr][nc]>0.5)continue;
+    if(!terrain[nr]?.[nc]?.passable&&CFG.biome==='city')continue;
+    let score=0;
+    for(let sr=-4;sr<=4;sr++)for(let sc=-4;sc<=4;sc++){
+      if(sr*sr+sc*sc>17)continue;
+      const tnr=nr+sr,tnc=nc+sc;
+      if(tnr<0||tnr>=GRID||tnc<0||tnc>=GRID)continue;
+      if(belief[tnr][tnc]===B_UNK)score+=1;
+      if(d.visitMask[tnr*GRID+tnc])score-=0.25;
+    }
+    // Boids: separation from other drones
+    for(const od of drones){
+      if(od.id===d.id)continue;
+      const dd=Math.abs(od.col-nc)+Math.abs(od.row-nr);
+      if(dd<4)score-=1.5*(4-dd);
+    }
+    if(CFG.droneAlgo==='boids'){
+      // Cohesion toward unexplored area center
+      let ux=0,uz=0,un=0;
+      for(let r2=0;r2<GRID;r2++)for(let c2=0;c2<GRID;c2++)if(belief[r2][c2]===B_UNK){ux+=c2;uz+=r2;un++;}
+      if(un>0){const cx=ux/un,cz=uz/un;score+=Math.max(0,8-Math.sqrt((nc-cx)**2+(nr-cz)**2))*0.1;}
+    }
+    score+=rng.float(-0.1,0.1);
+    if(score>bestS){bestS=score;best={nc,nr};}
+  }
+  return best||{nc:d.col,nr:d.row};
+}
+
+// ── UGV ACTION ────────────────────────────────────────────
+function ugvAction(u){
+  const avail=survivors.filter(s=>s.status==='discovered'&&s.assignedTo===null);
+  if(!avail.length)return null;
+  if(CFG.ugvAlgo==='random')return rng.choose(avail);
+  if(CFG.ugvAlgo==='greedy')return avail.reduce((a,b)=>(Math.abs(a.col-u.col)+Math.abs(a.row-u.row))<=(Math.abs(b.col-u.col)+Math.abs(b.row-u.row))?a:b);
+  // QMIX with fairness
+  const eps=1e-7,loads=ugvs.map(uu=>uu.rescued),avg=Math.max(eps,loads.reduce((a,b)=>a+b)/loads.length);
+  const e_i=1/(u.rescued+eps),e_bar=1/(avg+eps),fairPen=(eps+Math.abs(e_i/e_bar-1))/e_bar;
+  return avail.map(sv=>({sv,q:-0.5*(Math.abs(sv.col-u.col)+Math.abs(sv.row-u.row))-1.5*fairPen-ugvs.filter(uu=>uu.target===sv).length*10})).sort((a,b)=>b.q-a.q)[0]?.sv||null;
+}
+
+// ── FIRE TRUCK ACTION ─────────────────────────────────────
+function ftAction(ft){
+  // Find nearest known fire cell not already assigned
+  let best=null,bestD=999;
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    if(fire[r][c]>0.5){
+      const alreadyAssigned=firetrucks.some(f=>f.id!==ft.id&&f.targetFire&&f.targetFire[0]===r&&f.targetFire[1]===c);
+      if(alreadyAssigned)continue;
+      const d=Math.abs(r-ft.row)+Math.abs(c-ft.col);
+      if(d<bestD){bestD=d;best=[r,c];}
+    }
+  }
+  return best;
+}
+
+// ── A* ────────────────────────────────────────────────────
+function astar(sc,sr,gc,gr,avoidFire=true){
+  const key=(c,r)=>r*GRID+c,h=(c,r)=>Math.abs(c-gc)+Math.abs(r-gr);
+  const open=[{f:h(sc,sr),g:0,c:sc,r:sr,path:[[sc,sr]]}];
+  const vis=new Set();
+  while(open.length){
+    open.sort((a,b)=>a.f-b.f);
+    const{g,c,r,path}=open.shift();
+    const k=key(c,r);if(vis.has(k))continue;vis.add(k);
+    if(c===gc&&r===gr)return path;
+    for(const[dc,dr] of [[-1,0],[1,0],[0,-1],[0,1]]){
+      const nc=c+dc,nr=r+dr;
+      if(nc<0||nc>=GRID||nr<0||nr>=GRID)continue;
+      if(!terrain[nr]?.[nc]?.passable)continue;
+      if(avoidFire&&fire[nr][nc]>0.5)continue;
+      if(vis.has(key(nc,nr)))continue;
+      const ng=g+1;open.push({f:ng+h(nc,nr),g:ng,c:nc,r:nr,path:[...path,[nc,nr]]});
+    }
+  }
+  return[[sc,sr]];
+}
+
+// ── FIRE SPREAD ───────────────────────────────────────────
+function spreadFire(){
+  if(Math.random()>0.35)return;
+  const nf=fire.map(r=>[...r]);
+  const rate=CFG.fireRate/120;
+  for(let r=1;r<GRID-1;r++)for(let c=1;c<GRID-1;c++){
+    if(fire[r][c]>0.5&&fuel[r][c]>0){
+      for(const[dc,dr] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]]){
+        const nc=c+dc,nr=r+dr;
+        if(nr<0||nr>=GRID||nc<0||nc>=GRID)continue;
+        if(fire[nr][nc]>0.5||!terrain[nr][nc].passable)continue;
+        const wf=1+(dc*wind[0]+dr*wind[1])*windSpd*0.4;
+        if(Math.random()<rate*fuel[nr][nc]*wf){
+          nf[nr][nc]=1;
+          if(belief[nr][nc]!==B_UNK)belief[nr][nc]=B_FIRE;
+          const sv=survivors.find(s=>s.col===nc&&s.row===nr&&s.status!=='rescued'&&s.status!=='lost');
+          if(sv){sv.status='lost';lost++;document.getElementById('m-lost').textContent=lost;log('fire',`⚠ Survivor ${sv.id} lost to fire`);}
+        }
+      }
+    }
+  }
+  fire=nf;
+}
+
+// ── STEP ──────────────────────────────────────────────────
+function simStep(){
+  step++;document.getElementById('cstep').textContent=step;
+
+  // DRONES
+  for(const d of drones){
+    if(d.col===d.tc&&d.row===d.tr){
+      droneScans(d);d.status='scouting';
+      const a=droneAction(d);d.tc=a.nc;d.tr=a.nr;
+    } else {
+      const dc=Math.sign(d.tc-d.col),dr=Math.sign(d.tr-d.row);
+      if(dc!==0&&terrain[d.row]?.[d.col+dc]?.passable&&!fire[d.row][d.col+dc]){d.col+=dc;}
+      else if(dr!==0&&terrain[d.row+dr]?.[d.col]?.passable&&!fire[d.row+dr][d.col]){d.row+=dr;}
+      d.h=terrain[d.row]?.[d.col]?.h||0;d.status='moving';
+    }
+  }
+
+  // UGVs
+  for(const u of ugvs){
+    if(u.target){
+      const sv=u.target;
+      if(u.col===sv.col&&u.row===sv.row&&sv.status==='discovered'){
+        sv.status='rescued';sv.assignedTo=null;u.target=null;
+        u.rescued++;saved++;
+        belief[sv.row][sv.col]=B_RESC;
+        document.getElementById('m-sv').textContent=saved;
+        log('done',`✓ UGV ${u.id} rescued survivor ${sv.id}`);
+        u.status='idle';u.path=[];
+      }
+    }
+    if(!u.target||u.status==='idle'){
+      const t=ugvAction(u);
+      if(t){t.assignedTo=u;u.target=t;u.path=astar(u.col,u.row,t.col,t.row);u.pathIdx=0;u.status='navigating';log('action',`🚗 UGV ${u.id} → survivor ${t.id}`);}
+      else u.status='idle';
+    }
+    if(u.path.length>1&&u.pathIdx<u.path.length-1){
+      u.pathIdx++;
+      const[nc,nr]=u.path[u.pathIdx];
+      if(fire[nr][nc]>0.5){u.path=[];if(u.target)u.target.assignedTo=null;u.target=null;u.status='idle';}
+      else{u.dist++;u.col=nc;u.row=nr;}
+    }
+    u.h=terrain[u.row]?.[u.col]?.h||0;
+  }
+
+  // FIRE TRUCKS
+  for(const ft of firetrucks){
+    // Check arrival at fire
+    if(ft.targetFire){
+      const[tr,tc]=ft.targetFire;
+      if(ft.col===tc&&ft.row===tr){
+        // Suppress fire in radius
+        const supR=2;
+        for(let dr=-supR;dr<=supR;dr++)for(let dc=-supR;dc<=supR;dc++){
+          const nr=tr+dr,nc=tc+dc;
+          if(nr>=0&&nr<GRID&&nc>=0&&nc<GRID&&fire[nr][nc]>0.5){
+            fire[nr][nc]=0;fuel[nr][nc]*=0.1;
+            if(belief[nr][nc]===B_FIRE)belief[nr][nc]=B_CLR;
+            ft.suppressed++;suppressed++;
+          }
+        }
+        document.getElementById('m-sup').textContent=suppressed;
+        ft.targetFire=null;ft.status='idle';ft.path=[];
+        log('action',`🚒 FireTruck ${ft.id} suppressed fire at (${tc},${tr})`);
+      }
+    }
+    if(!ft.targetFire||ft.status==='idle'){
+      const tgt=ftAction(ft);
+      if(tgt){ft.targetFire=tgt;ft.path=astar(ft.col,ft.row,tgt[1],tgt[0],false);ft.pathIdx=0;ft.status='responding';}
+      else ft.status='idle';
+    }
+    if(ft.path.length>1&&ft.pathIdx<ft.path.length-1){
+      ft.pathIdx++;const[nc,nr]=ft.path[ft.pathIdx];
+      ft.dist++;ft.col=nc;ft.row=nr;
+    }
+    ft.h=terrain[ft.row]?.[ft.col]?.h||0;
+  }
+
+  spreadFire();
+
+  const tot=GRID*GRID,expl=belief.flat().filter(v=>v!==B_UNK).length;
+  const fc=fire.flat().filter(v=>v>0.5).length;
+  const exP=Math.round(expl/tot*100),fiP=Math.round(fc/tot*100);
+  explHist.push(exP);fireHist.push(fiP);
+  document.getElementById('m-fi').textContent=fiP+'%';
+  document.getElementById('m-ex').textContent=exP+'%';
+  document.getElementById('epbar').style.width=exP+'%';
+
+  const done=survivors.filter(s=>s.status==='rescued').length;
+  const lostN=survivors.filter(s=>s.status==='lost').length;
+  updateMiniCharts();drawBeliefMap();updateRoster();render();
+
+  if(done+lostN>=totalSv||step>=MAX_STEPS||fiP>75)endSim();
+}
+
+// ── TERRAIN COLORS (bright, daylight) ─────────────────────
+function terrainFill(t,top){
+  const cols={
+    water: top?'#5b9bd5':'#3d7ab5',
+    grass: top?'#7ec850':'#5a9a30',
+    forest:top?'#3a7a2a':'#2a5a1a',
+    rock:  top?'#b0a090':'#907060',
+    peak:  top?'#f0eeeb':'#d0cecc',
+    building:top?'#8090a8':'#6070 88',
+    street:top?'#c0c8d8':'#a0a8b8',
+    plaza: top?'#d8d0c0':'#b8b0a0',
+    border:top?'#404050':'#303040',
+    clear: top?'#9ad060':'#7ab040',
+  };
+  return cols[t]||(top?'#b0c0a0':'#80a070');
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function render(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Sky gradient (bright)
+  const sky=ctx.createLinearGradient(0,0,0,canvas.height);
+  sky.addColorStop(0,'#c8dff0');sky.addColorStop(1,'#e8f4e0');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Sort tiles by render order (back-to-front changes with rotation)
+  const tiles=[];
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    const[px,py]=iso(c,r,terrain[r][c].h);
+    tiles.push({r,c,px,py});
+  }
+  tiles.sort((a,b)=>a.py-b.py);
+
+  for(const{r,c,px,py} of tiles){
+    const t=terrain[r][c];
+    const h=t.h,tw=TW*camZoom,th2=TH*camZoom;
+
+    // Fog of war — lighter tone if unknown
+    const fog=belief[r][c]===B_UNK?0.45:0;
+
+    let topFill=terrainFill(t.type,true);
+    if(fire[r][c]>0.5){
+      const ft=Date.now()/400;topFill=`rgb(${200+Math.round(50*Math.sin(ft+c+r))},${60+Math.round(30*Math.sin(ft))},20)`;
+    }
+    if(belief[r][c]===B_RESC)topFill='#7ad860';
+
+    // Top diamond
+    ctx.beginPath();
+    ctx.moveTo(px,py-th2);ctx.lineTo(px+tw/2,py);
+    ctx.lineTo(px,py+th2);ctx.lineTo(px-tw/2,py);
+    ctx.closePath();
+    ctx.fillStyle=topFill;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=0.5;ctx.stroke();
+
+    // Fog overlay on top
+    if(fog>0){
+      ctx.beginPath();
+      ctx.moveTo(px,py-th2);ctx.lineTo(px+tw/2,py);
+      ctx.lineTo(px,py+th2);ctx.lineTo(px-tw/2,py);
+      ctx.closePath();
+      ctx.fillStyle=`rgba(200,215,230,${fog})`;ctx.fill();
+    }
+
+    // Left wall face
+    if(h>0.3&&t.type!=='water'&&t.type!=='border'){
+      const wh=Math.max(4,h*5*camZoom);
+      ctx.beginPath();
+      ctx.moveTo(px-tw/2,py);ctx.lineTo(px,py+th2);
+      ctx.lineTo(px,py+th2+wh);ctx.lineTo(px-tw/2,py+wh);
+      ctx.closePath();
+      ctx.fillStyle=t.type==='building'?'#607080':t.type==='rock'?'#806050':'#5a8040';
+      ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.15)';ctx.lineWidth=0.5;ctx.stroke();
+    }
+    // Right wall face
+    if(h>0.3&&t.type!=='water'&&t.type!=='border'){
+      const wh=Math.max(4,h*5*camZoom);
+      ctx.beginPath();
+      ctx.moveTo(px+tw/2,py);ctx.lineTo(px,py+th2);
+      ctx.lineTo(px,py+th2+wh);ctx.lineTo(px+tw/2,py+wh);
+      ctx.closePath();
+      ctx.fillStyle=t.type==='building'?'#4a5a6a':t.type==='rock'?'#604030':'#3a6020';
+      ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=0.5;ctx.stroke();
+      // Building windows
+      if(t.type==='building'&&h>3){
+        const winH=wh*0.6,winW=tw*0.15;
+        for(let wi=0;wi<2;wi++){
+          ctx.fillStyle='rgba(255,230,100,0.6)';
+          ctx.fillRect(px+tw/4+wi*winW*1.2,py+th2+wh*0.2,winW,winH*0.4);
+        }
+      }
+    }
+
+    // Fire particles
+    if(fire[r][c]>0.5){
+      const ft=Date.now()/250;
+      for(let i=0;i<3;i++){
+        const fx=px+Math.sin(ft+i*2.1)*3*camZoom;
+        const fy=py-th2-2-(Math.abs(Math.sin(ft*1.3+i)))*7*camZoom;
+        ctx.beginPath();ctx.arc(fx,fy,(1.2+Math.sin(ft+i)*0.5)*camZoom,0,Math.PI*2);
+        ctx.fillStyle=`rgba(255,${100+Math.round(80*Math.sin(ft+i))},0,0.9)`;ctx.fill();
+      }
+    }
+  }
+
+  // ── UGV paths ──────────────────────────────────────────
+  for(const u of ugvs){
+    if(u.path.length<2)continue;
+    ctx.strokeStyle=u.color+'66';ctx.lineWidth=1.5*camZoom;ctx.setLineDash([3,5]);
+    ctx.beginPath();
+    u.path.forEach(([pc,pr],i)=>{
+      const[px,py]=iso(pc,pr,terrain[pr]?.[pc]?.h||0);
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    });
+    ctx.stroke();ctx.setLineDash([]);
+  }
+
+  // ── SURVIVORS ─────────────────────────────────────────
+  const now=Date.now();
+  for(const sv of survivors){
+    const[px,py]=iso(sv.col,sv.row,sv.h);
+    const yoff=-TH*camZoom-6*camZoom;
+
+    if(sv.status==='unknown') continue; // hidden until discovered
+
+    if(sv.status==='discovered'){
+      // GOLD / YELLOW FLASHING — undiscovered but known to drones
+      const pulse=Math.sin(now/280)*0.5+0.5;
+      // Outer flash ring
+      ctx.beginPath();ctx.arc(px,py+yoff,(7+pulse*4)*camZoom,0,Math.PI*2);
+      ctx.fillStyle=`rgba(251,191,36,${0.15+pulse*0.25})`;ctx.fill();
+      // Inner body
+      ctx.beginPath();ctx.arc(px,py+yoff,5*camZoom,0,Math.PI*2);
+      ctx.fillStyle=`rgb(${220+Math.round(35*pulse)},${170+Math.round(20*pulse)},0)`;ctx.fill();
+      ctx.strokeStyle='rgba(120,80,0,0.6)';ctx.lineWidth=1;ctx.stroke();
+      // ! exclamation
+      ctx.fillStyle='#1a0a00';ctx.font=`bold ${7*camZoom}px sans-serif`;ctx.textAlign='center';
+      ctx.fillText('!',px,py+yoff+2.5*camZoom);
+    } else if(sv.status==='rescued'){
+      // SOLID GREEN — rescued
+      ctx.beginPath();ctx.arc(px,py+yoff,5*camZoom,0,Math.PI*2);
+      ctx.fillStyle='#22c55e';ctx.fill();
+      ctx.strokeStyle='#15803d';ctx.lineWidth=1;ctx.stroke();
+      ctx.fillStyle='white';ctx.font=`bold ${6*camZoom}px sans-serif`;ctx.textAlign='center';
+      ctx.fillText('✓',px,py+yoff+2*camZoom);
+    } else if(sv.status==='lost'){
+      // MAROON FLASHING — lost to fire
+      const pulse2=Math.sin(now/400)*0.5+0.5;
+      ctx.beginPath();ctx.arc(px,py+yoff,(5+pulse2*2)*camZoom,0,Math.PI*2);
+      ctx.fillStyle=`rgba(127,${Math.round(pulse2*20)},${Math.round(pulse2*20)},${0.7+pulse2*0.3})`;ctx.fill();
+      ctx.strokeStyle='#7f1d1d';ctx.lineWidth=1;ctx.stroke();
+      ctx.fillStyle='rgba(255,220,220,0.9)';ctx.font=`bold ${6*camZoom}px sans-serif`;ctx.textAlign='center';
+      ctx.fillText('✗',px,py+yoff+2*camZoom);
+    }
+  }
+
+  // ── FIRE TRUCKS ────────────────────────────────────────
+  for(const ft of firetrucks){
+    const[px,py]=iso(ft.col,ft.row,ft.h);
+    const sz=7*camZoom;
+    // Glow
+    ctx.beginPath();ctx.arc(px,py-TH*camZoom,sz*1.8,0,Math.PI*2);
+    ctx.fillStyle=ft.color+'30';ctx.fill();
+    // Body (wider rectangle = truck look)
+    ctx.fillStyle=ft.color;
+    ctx.fillRect(px-sz,py-TH*camZoom-sz*0.6,sz*2,sz*1.2);
+    // Cabin
+    ctx.fillStyle='#cc0000';
+    ctx.fillRect(px-sz,py-TH*camZoom-sz*1.4,sz*0.9,sz*0.8);
+    // Light bar
+    const ltf=Date.now()/200;
+    ctx.fillStyle=Math.sin(ltf)>0?'#ff2200':'#0055ff';
+    ctx.fillRect(px-sz+2,py-TH*camZoom-sz*1.5,sz*0.3,sz*0.2);
+    ctx.fillStyle=Math.sin(ltf)>0?'#0055ff':'#ff2200';
+    ctx.fillRect(px-sz+sz*0.5,py-TH*camZoom-sz*1.5,sz*0.3,sz*0.2);
+    // Label
+    ctx.fillStyle=ft.color;ctx.font=`bold ${7*camZoom}px IBM Plex Mono`;ctx.textAlign='center';
+    ctx.fillText(`FT${ft.id}`,px,py-TH*camZoom+sz+8*camZoom);
+    // Status dot
+    ctx.beginPath();ctx.arc(px+sz+1,py-TH*camZoom-sz,2.5*camZoom,0,Math.PI*2);
+    ctx.fillStyle=ft.status==='idle'?'#94a3b8':ft.status==='responding'?ft.color:'#22c55e';ctx.fill();
+  }
+
+  // ── UGVs ──────────────────────────────────────────────
+  for(const u of ugvs){
+    const[px,py]=iso(u.col,u.row,u.h);
+    const sz=6*camZoom;
+    // Glow
+    ctx.beginPath();ctx.arc(px,py-TH*camZoom,sz*2,0,Math.PI*2);
+    ctx.fillStyle=u.color+'25';ctx.fill();
+    // Body
+    ctx.fillStyle=u.color;
+    ctx.fillRect(px-sz,py-TH*camZoom-sz*0.5,sz*2,sz);
+    // Wheels
+    for(const[wx,wy] of [[-sz+1,sz*0.6],[sz-3,sz*0.6],[-sz+1,-sz*0.3],[sz-3,-sz*0.3]]){
+      ctx.beginPath();ctx.ellipse(px+wx,py-TH*camZoom+wy,2.5*camZoom,1.5*camZoom,0,0,Math.PI*2);
+      ctx.fillStyle='#222';ctx.fill();
+    }
+    ctx.fillStyle='white';ctx.font=`bold ${6*camZoom}px IBM Plex Mono`;ctx.textAlign='center';
+    ctx.fillText(`U${u.id}`,px,py-TH*camZoom+sz*0.35);
+    ctx.beginPath();ctx.arc(px+sz+1,py-TH*camZoom-sz,2.5*camZoom,0,Math.PI*2);
+    ctx.fillStyle=u.status==='idle'?'#94a3b8':u.status==='navigating'?u.color:'#22c55e';ctx.fill();
+  }
+
+  // ── DRONES ────────────────────────────────────────────
+  for(const d of drones){
+    const[px,py]=iso(d.col,d.row,d.h+3.5); // fly high
+    const[spx,spy]=iso(d.col,d.row,d.h);   // shadow
+    // Shadow
+    ctx.beginPath();ctx.ellipse(spx,spy,8*camZoom,4*camZoom,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.12)';ctx.fill();
+    // Glow
+    ctx.beginPath();ctx.arc(px,py,9*camZoom,0,Math.PI*2);
+    ctx.fillStyle=d.color+'30';ctx.fill();
+    // Body
+    ctx.fillStyle=d.color;ctx.beginPath();ctx.arc(px,py,5*camZoom,0,Math.PI*2);ctx.fill();
+    // Rotors
+    const rt=now/80;
+    for(let i=0;i<4;i++){
+      const ra=rt+i*Math.PI/2;
+      const rx=px+Math.cos(ra)*7*camZoom,ry=py+Math.sin(ra)*3.5*camZoom;
+      ctx.beginPath();ctx.ellipse(rx,ry,3*camZoom,1.2*camZoom,ra,0,Math.PI*2);
+      ctx.fillStyle=d.color+'99';ctx.fill();
+    }
+    // Scan zone (faint cone)
+    ctx.strokeStyle=d.color+'18';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(px-9*camZoom,py+6*camZoom);
+    ctx.lineTo(spx-7*camZoom,spy);ctx.lineTo(spx+7*camZoom,spy);
+    ctx.lineTo(px+9*camZoom,py+6*camZoom);ctx.stroke();
+    // Label
+    ctx.fillStyle=d.color;ctx.font=`bold ${7*camZoom}px IBM Plex Mono`;ctx.textAlign='center';
+    ctx.fillText(`D${d.id}`,px,py+13*camZoom);
+    ctx.beginPath();ctx.arc(px+6*camZoom,py-6*camZoom,2.5*camZoom,0,Math.PI*2);
+    ctx.fillStyle=d.status==='idle'?'#94a3b8':'#38bdf8';ctx.fill();
+  }
+
+  // HUD
+  ctx.fillStyle='rgba(255,255,255,0.82)';
+  ctx.beginPath();ctx.roundRect(8,8,195,52,4);ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=0.5;ctx.stroke();
+  ctx.fillStyle='#2a3a50';ctx.font='9px IBM Plex Mono';ctx.textAlign='left';
+  ctx.fillText(`Step: ${step} / ${MAX_STEPS}`,14,24);
+  ctx.fillText(`Wind: ${windSpd.toFixed(1)}× [${wind[0].toFixed(1)}, ${wind[1].toFixed(1)}]`,14,38);
+  ctx.fillText(`Drag to rotate · Scroll to zoom`,14,52);
+}
+
+// ── MINI CHARTS ───────────────────────────────────────────
+function updateMiniCharts(){
+  const c=document.getElementById('ch-prog');
+  const cx=c.getContext('2d');c.width=c.offsetWidth;c.height=60;cx.clearRect(0,0,c.width,c.height);
+  const dl=(data,col,lbl)=>{
+    if(data.length<2)return;const n=data.length;
+    cx.beginPath();cx.strokeStyle=col;cx.lineWidth=1.5;
+    data.forEach((v,i)=>{const x=i/(n-1)*c.width,y=c.height-v/100*(c.height-4)+2;i===0?cx.moveTo(x,y):cx.lineTo(x,y);});
+    cx.stroke();cx.fillStyle=col;cx.font='8px IBM Plex Mono';cx.fillText(lbl,4,lbl==='explore'?11:22);
+  };
+  dl(explHist,'#2563eb','explore');dl(fireHist,'#dc2626','fire %');
+}
+
+function drawBeliefMap(){
+  const c=document.getElementById('bmap');const cx=c.getContext('2d');
+  c.width=c.offsetWidth;c.height=90;
+  const cw=c.width/GRID,ch=c.height/GRID;
+  for(let r=0;r<GRID;r++)for(let cc2=0;cc2<GRID;cc2++){
+    const b=belief[r][cc2];
+    cx.fillStyle=b===B_UNK?'#d0dce8':b===B_CLR?'#b8d090':b===B_SRV?'#fbbf24':
+      b===B_FIRE?'#ef4444':b===B_RESC?'#22c55e':'#8090a0';
+    cx.fillRect(cc2*cw,r*ch,cw,ch);
+  }
+  drones.forEach(d=>{cx.fillStyle=d.color;cx.beginPath();cx.arc(d.col*cw+cw/2,d.row*ch+ch/2,2.5,0,Math.PI*2);cx.fill();});
+  ugvs.forEach(u=>{cx.fillStyle=u.color;cx.fillRect(u.col*cw,u.row*ch,Math.max(cw,3),Math.max(ch,3));});
+  firetrucks.forEach(ft=>{cx.fillStyle=ft.color;cx.fillRect(ft.col*cw,ft.row*ch,Math.max(cw,3),Math.max(ch,3));});
+}
+
+function updateRoster(){
+  const r=document.getElementById('roster');r.innerHTML='';
+  const all=[
+    ...drones.map(d=>({...d,type:'UAV',ico:'🚁',algo:CFG.droneAlgo,perf:`${d.explored} cells`,role:'Scout'})),
+    ...ugvs.map(u=>({...u,type:'UGV',ico:'🚗',algo:CFG.ugvAlgo,perf:`${u.rescued} rescued`,role:'Rescue'})),
+    ...firetrucks.map(ft=>({...ft,type:'FireTruck',ico:'🚒',algo:'greedy',perf:`${ft.suppressed} suppressed`,role:'Suppression'})),
+  ];
+  all.forEach(a=>{
+    const sc=a.status==='idle'?'si':a.status==='moving'||a.status==='navigating'||a.status==='responding'?'sn':a.status==='scouting'?'sm':'sf';
+    const pct=a.type==='UAV'?Math.min(100,a.explored/3):a.type==='UGV'?a.rescued/(totalSv||1)*100:a.suppressed;
+    const d=document.createElement('div');
+    d.className=`ac ${a.status!=='idle'?'act':''}`;
+    d.innerHTML=`
+      <div class="acb" style="background:${a.color}"></div>
+      <div class="act-row">
+        <span class="a-ico">${a.ico}</span>
+        <div><div class="a-name" style="color:${a.color}">${a.type} ${a.id}</div><div class="a-role">${a.role} · ${a.algo.toUpperCase()}</div></div>
+        <span class="a-st ${sc}">${a.status}</span>
+      </div>
+      <div class="apb"><div class="apbf" style="width:${Math.min(100,pct)}%;background:${a.color}"></div></div>
+      <div class="ainf">${a.perf}</div>`;
+    r.appendChild(d);
+  });
+}
+
+function log(type,msg){
+  const el=document.getElementById('elog');
+  const d=document.createElement('div');d.className=`le l${type.charAt(0)}`;
+  d.innerHTML=`<span class="lt">[${String(step).padStart(4,'0')}]</span> ${msg}`;
+  el.insertBefore(d,el.firstChild);if(el.children.length>60)el.removeChild(el.lastChild);
+}
+
+// ── REPORT ────────────────────────────────────────────────
+function gini(v){
+  if(!v.length||!v.some(x=>x))return 0;
+  const a=[...v].sort((x,y)=>x-y),n=a.length,s=a.reduce((x,y)=>x+y,0);
+  if(!s)return 0;let num=0;for(let i=0;i<n;i++)num+=(2*(i+1)-n-1)*a[i];
+  return Math.max(0,num/(n*s));
+}
+function endSim(){
+  running=false;clearTimeout(tid);
+  document.getElementById('bplay').style.display='inline-flex';
+  document.getElementById('bpause').style.display='none';
+  log('done',`▣ Complete — ${step} steps`);
+  setTimeout(showReport,600);
+}
+function showReport(){
+  const sv=survivors.filter(s=>s.status==='rescued').length;
+  const lostN=survivors.filter(s=>s.status==='lost').length;
+  const fiP=Math.round(fire.flat().filter(v=>v>0.5).length/(GRID*GRID)*100);
+  const exP=Math.round(belief.flat().filter(v=>v!==B_UNK).length/(GRID*GRID)*100);
+  const score=(sv/totalSv*50)+(exP/100*25)+(1-fiP/100)*25;
+  const grade=score>=90?'S':score>=75?'A':score>=60?'B':score>=45?'C':'D';
+  const gcol={S:'#15803d',A:'#1d4ed8',B:'#ca8a04',C:'#ea580c',D:'#b91c1c'}[grade];
+
+  document.getElementById('rep-sub').textContent=
+    `${CFG.biome==='mountain'?'Mountain Wildfire':'Urban Disaster'} · Seed ${CFG.seed} · ${step} steps · UAV: ${CFG.droneAlgo.toUpperCase()} · UGV+Truck: ${CFG.ugvAlgo.toUpperCase()}`;
+  document.getElementById('rep-metrics').innerHTML=`
+    <div class="rmc"><div class="rmc-l">Saved</div><div class="rmc-v" style="color:var(--green)">${sv}/${totalSv}</div></div>
+    <div class="rmc"><div class="rmc-l">Lost to fire</div><div class="rmc-v" style="color:var(--red)">${lostN}</div></div>
+    <div class="rmc"><div class="rmc-l">Explored</div><div class="rmc-v" style="color:var(--blue)">${exP}%</div></div>
+    <div class="rmc"><div class="rmc-l">Fire spread</div><div class="rmc-v" style="color:var(--red)">${fiP}%</div></div>
+    <div class="rmc"><div class="rmc-l">UAV→UGV handoffs</div><div class="rmc-v" style="color:#7c3aed">${collabs}</div></div>
+    <div class="rmc"><div class="rmc-l">Fire suppressed</div><div class="rmc-v" style="color:#ea580c">${suppressed}</div></div>`;
+  document.getElementById('rep-grade').innerHTML=`<span class="rgrade" style="color:${gcol}">${grade}</span><span class="rgrade-l">Score: ${score.toFixed(1)}/100</span>`;
+  document.getElementById('rep-grade').style.cssText=`text-align:center;margin:16px 0;padding:18px;border-radius:6px;background:${gcol}15;border:1px solid ${gcol}44;`;
+  document.getElementById('rep-table').innerHTML=[
+    ...drones.map(d=>`<tr><td>Drone ${d.id}</td><td>UAV Scout</td><td>${CFG.droneAlgo.toUpperCase()}</td><td>${d.explored} cells, ${d.handoffs} handoffs</td><td>—</td></tr>`),
+    ...ugvs.map(u=>`<tr><td>UGV ${u.id}</td><td>Ground Rescue</td><td>${CFG.ugvAlgo.toUpperCase()}</td><td>${u.rescued} rescued</td><td>${u.dist} steps</td></tr>`),
+    ...firetrucks.map(ft=>`<tr><td>FireTruck ${ft.id}</td><td>Suppression</td><td>Greedy</td><td>${ft.suppressed} cells suppressed</td><td>${ft.dist} steps</td></tr>`)
+  ].join('');
+  const loads=ugvs.map(u=>u.rescued);const g=gini(loads);
+  document.getElementById('rep-notes').innerHTML=`
+    <b>Fairness Analysis (original paper method)</b><br>
+    UGV rescue Gini coefficient: <b>${g.toFixed(4)}</b> (0 = perfectly equal)<br>
+    ${g<0.1?'✓ Excellent — QMIX maintained balanced workload':g<0.25?'✓ Good — minor load imbalance':'⚠ Imbalance — consider increasing fairness weight'}<br>
+    Fairness reward r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t embedded in QMIX Q-value<br><br>
+    <b>Algorithm Notes</b><br>
+    UAV (${CFG.droneAlgo.toUpperCase()}): ${CFG.droneAlgo==='mappo'?'Coordination penalty drove systematic spread.':CFG.droneAlgo==='boids'?'Emergent cohesion/separation produced coverage.':'Unguided — inefficient.'}<br>
+    UGV (${CFG.ugvAlgo.toUpperCase()}): ${CFG.ugvAlgo==='qmix'?'Value decomposition maintained fair rescue distribution.':CFG.ugvAlgo==='greedy'?'Nearest-first — fast but no fairness.':'Random baseline.'}<br>
+    Fire Trucks: Greedy nearest-fire targeting, suppresses 5-cell radius on arrival.`;
+  document.getElementById('report').classList.add('show');
+}
+
+// ── CONTROLS ──────────────────────────────────────────────
+function getInterval(){return Math.max(30,490-parseInt(document.getElementById('spd').value)*44);}
+function startSim(){
+  if(running)return;running=true;
+  document.getElementById('overlay').style.display='none';
+  document.getElementById('bplay').style.display='none';
+  document.getElementById('bpause').style.display='inline-flex';
+  const loop=()=>{if(!running)return;simStep();tid=setTimeout(loop,getInterval());};
+  tid=setTimeout(loop,getInterval());
+}
+function pauseSim(){
+  running=false;clearTimeout(tid);
+  document.getElementById('bplay').style.display='inline-flex';
+  document.getElementById('bpause').style.display='none';
+}
+function resetSim(){
+  pauseSim();document.getElementById('report').classList.remove('show');
+  initSim();
+  document.getElementById('overlay').style.display='flex';
+  document.getElementById('elog').innerHTML='';
+}
+function initSim(){
+  CFG.biome=document.getElementById('biome').value;
+  CFG.seed=parseInt(document.getElementById('seed-sl').value);
+  CFG.nDrones=parseInt(document.getElementById('n-dr').value);
+  CFG.nUGV=parseInt(document.getElementById('n-ug').value);
+  CFG.nFT=parseInt(document.getElementById('n-ft').value);
+  CFG.fireRate=parseInt(document.getElementById('fire-r').value);
+  rng=new RNG(CFG.seed);
+  step=0;collabs=0;saved=0;suppressed=0;lost=0;explHist=[];fireHist=[];
+  const wa=rng.float(0,Math.PI*2);wind=[Math.cos(wa),Math.sin(wa)];windSpd=rng.float(0.6,1.8);
+  genTerrain();spawnAgents();
+  resizeCanvas();updateRoster();drawBeliefMap();
+  ['cstep','m-sv','m-co','m-sup','m-lost'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('m-fi').textContent='0%';
+  document.getElementById('m-ex').textContent='0%';
+  document.getElementById('epbar').style.width='0%';
+  log('info',`Init — ${CFG.biome} seed:${CFG.seed} | ${CFG.nDrones} UAV (${CFG.droneAlgo}) + ${CFG.nUGV} UGV (${CFG.ugvAlgo}) + ${CFG.nFT} FireTruck`);
+  log('info',`Wind: ${windSpd.toFixed(1)}× dir:(${wind[0].toFixed(1)},${wind[1].toFixed(1)}) | ${totalSv} survivors`);
+  render();
+}
+function setSpawn(m,btn){CFG.spawn=m;document.querySelectorAll('#sp-rand,#sp-stat').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function setAlgo(type,btn){
+  if(type==='drone')CFG.droneAlgo=btn.dataset.alg;else CFG.ugvAlgo=btn.dataset.alg;
+  btn.closest('div').querySelectorAll('.gb[data-alg]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+}
+
+// Slider listeners
+[['seed-sl','seed-v'],['n-dr','n-dr-v'],['n-ug','n-ug-v'],['n-ft','n-ft-v'],['fire-r','fire-r-v']].forEach(([id,vid])=>{
+  const el=document.getElementById(id),out=document.getElementById(vid);
+  if(el&&out)el.addEventListener('input',()=>out.textContent=el.value);
+});
+document.getElementById('spd').addEventListener('input',e=>document.getElementById('spdv').textContent=e.target.value+'×');
+
+document.getElementById('bplay').addEventListener('click',startSim);
+document.getElementById('bpause').addEventListener('click',pauseSim);
+document.getElementById('breset').addEventListener('click',resetSim);
+document.getElementById('bstep').addEventListener('click',()=>{document.getElementById('overlay').style.display='none';simStep();});
+document.getElementById('breport').addEventListener('click',showReport);
+
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();running?pauseSim():startSim();}
+  if(e.code==='ArrowRight')simStep();
+  if(e.code==='KeyR')resetSim();
+  if(e.code==='ArrowLeft')camRot-=0.15;
+  if(e.code==='ArrowUp')camZoom=Math.min(2,camZoom+0.1);
+  if(e.code==='ArrowDown')camZoom=Math.max(0.4,camZoom-0.1);
+  render();
+});
+
+// Animate (fire flicker + drone rotors)
+function animLoop(){render();requestAnimationFrame(animLoop);}
+resizeCanvas();initSim();animLoop();
+</script>
+</body>
+</html>
