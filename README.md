@@ -1,7 +1,7 @@
 # Drone–UGV Cooperative Disaster Response
 ## A Two-Tier Multi-Agent Rescue System using MAPPO + QMIX
 
-> **This is a follow-up to my 2024 NSF REU research.** The original work used Linear Programming + FE-MADDPG on a 2D grid. This repo takes a different approach — a two-tier system where aerial drones scout terrain and communicate with ground robots that perform the actual rescue, with fire trucks added for suppression. Built as a personal extension project after the REU.
+> **This is a follow-up to my 2024 NSF REU research.** The original work used Linear Programming + FE-MADDPG on a 2D grid. This repo takes a different approach: a two-tier system where aerial drones scout terrain and communicate with ground robots that perform the actual rescue, with fire trucks added for suppression. Built as a personal extension project after the REU.
 
 ---
 
@@ -15,7 +15,7 @@ The original paper had all robots doing everything. This version splits responsi
 | Ground | Rescue robots (UGV) | **QMIX** | Reads drone's belief map, navigates to survivors, performs rescue |
 | Ground | Fire trucks | Greedy | Suppresses fire spread in radius around target cells |
 
-The drones and ground robots never communicate directly. Instead, drones write to a **shared belief map** — ground robots are blind to undiscovered areas and can only act on what the drones have found. This information asymmetry is the interesting part.
+The drones and ground robots never communicate directly. Instead, drones write to a **shared belief map**. Ground robots are blind to undiscovered areas and can only act on what the drones have found. This information asymmetry is the interesting part.
 
 ---
 
@@ -31,7 +31,7 @@ The drones and ground robots never communicate directly. Instead, drones write t
 | Fire model | None | Cellular automaton with wind |
 | Terrain | Uniform | Procedural mountain or urban biome |
 
-The fairness reward from the original paper is still here — it's just wired differently now:
+The fairness reward from the original paper is still here, just wired differently now:
 
 $$r_t^i = \frac{\varepsilon + \left|e_t^i / \bar{e}_t - 1\right|}{\bar{e}_t}$$
 
@@ -45,7 +45,7 @@ In the original, this drove the FE-MADDPG policy gradient. Here it's subtracted 
 
 **[Research portal](https://jackpham-rgb.github.io/drone-ugv-disaster-response/index.html)**
 
-Or clone and open `sim3d_v3.html` directly in any browser — no install needed.
+Or clone and open `sim3d_v3.html` directly in any browser: no install needed.
 
 In the simulation you can:
 - Switch between **mountain wildfire** and **urban disaster** terrain
@@ -66,7 +66,7 @@ In the simulation you can:
 
 The notebook `drone_ugv_notebook.ipynb` walks through everything:
 
-1. MDP formulation — two coupled MDPs, state space size
+1. MDP formulation: two coupled MDPs, state space size
 2. Fairness reward derivation and visualization
 3. Terrain generation from scratch (fBm noise, no dependencies)
 4. MAPPO drone scoring function
@@ -76,7 +76,7 @@ The notebook `drone_ugv_notebook.ipynb` walks through everything:
 8. Multi-episode algorithm comparison (6 configurations, 10 seeds)
 9. Custom experiment panel
 
-To run it — either open in Colab or run locally alongside `drone_ugv_sim.py`. The first cell auto-downloads the sim module from this repo if it's not present.
+To run it, either open in Colab or run locally alongside `drone_ugv_sim.py`. The first cell auto-downloads the sim module from this repo if it's not present.
 
 ---
 
@@ -84,7 +84,7 @@ To run it — either open in Colab or run locally alongside `drone_ugv_sim.py`. 
 
 | File | Description |
 |------|-------------|
-| `sim3d_v3.html` | 3D isometric simulation — open in any browser |
+| `sim3d_v3.html` | 3D isometric simulation (open in any browser) |
 | `drone_ugv_notebook.ipynb` | Jupyter research notebook |
 | `index.html` | Research portal landing page |
 | `notebook.html` | HTML notebook viewer |
@@ -95,13 +95,13 @@ To run it — either open in Colab or run locally alongside `drone_ugv_sim.py`. 
 
 ## Algorithms used
 
-**MAPPO** — Yu et al. (2021). *The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games.* NeurIPS.
+**MAPPO**: Yu et al. (2021). *The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games.* NeurIPS.
 
-**QMIX** — Rashid et al. (2018). *QMIX: Monotonic Value Function Factorisation for Deep Multi-Agent RL.* ICML.
+**QMIX**: Rashid et al. (2018). *QMIX: Monotonic Value Function Factorisation for Deep Multi-Agent RL.* ICML.
 
-**Fairness reward** — Liu et al. (2022). *A fairness-aware cooperation strategy for multi-agent systems driven by DRL.* CCC. *(Also from the original REU paper below.)*
+**Fairness reward**: Liu et al. (2022). *A fairness-aware cooperation strategy for multi-agent systems driven by DRL.* CCC. *(Also from the original REU paper below.)*
 
-**Boids** — Reynolds (1987). *Flocks, herds, and schools: A distributed behavioral model.* SIGGRAPH.
+**Boids**: Reynolds (1987). *Flocks, herds, and schools: A distributed behavioral model.* SIGGRAPH.
 
 ---
 
