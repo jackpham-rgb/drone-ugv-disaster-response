@@ -89,7 +89,7 @@ To run it — either open in Colab or run locally alongside `drone_ugv_sim.py`. 
 | `index.html` | Research portal landing page |
 | `notebook.html` | HTML notebook viewer |
 | `visualizations.html` | Interactive data visualizations |
-| `paper/` | Original REU paper (Pham et al., 2024) |
+| `paper/` | Original REU report (2024, unpublished) |
 
 ---
 
