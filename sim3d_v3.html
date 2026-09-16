@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Area Disaster Response — 3D Simulation</title>
+<title>Area Disaster Response: 3D Simulation</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -291,7 +291,7 @@ canvas.mini{width:100%;height:60px;display:block;}
 
 <script>
 /* ================================================================
-   Area Disaster Response — 3D Isometric Simulation
+   Area Disaster Response: 3D Isometric Simulation
    Agents: UAV Drones (MAPPO), UGV Ground Robots (QMIX), Fire Trucks
    Victim colors: gold/yellow flashing = undiscovered,
                   green = rescued, maroon = lost to fire
@@ -339,7 +339,7 @@ const canvas=document.getElementById('simCanvas');
 const ctx=canvas.getContext('2d');
 
 // Rotation state
-let camAngle=0; // 0..3 (four 90° increments) — or smooth
+let camAngle=0; // 0..3 (four 90° increments), or smooth
 let isDragging=false,lastMX=0;
 let camRot=0.3; // radians, smooth rotation
 let camZoom=1.0;
@@ -722,7 +722,7 @@ function render(){
     const t=terrain[r][c];
     const h=t.h,tw=TW*camZoom,th2=TH*camZoom;
 
-    // Fog of war — lighter tone if unknown
+    // Fog of war: lighter tone if unknown
     const fog=belief[r][c]===B_UNK?0.45:0;
 
     let topFill=terrainFill(t.type,true);
@@ -810,7 +810,7 @@ function render(){
     if(sv.status==='unknown') continue; // hidden until discovered
 
     if(sv.status==='discovered'){
-      // GOLD / YELLOW FLASHING — undiscovered but known to drones
+      // GOLD / YELLOW FLASHING: undiscovered but known to drones
       const pulse=Math.sin(now/280)*0.5+0.5;
       // Outer flash ring
       ctx.beginPath();ctx.arc(px,py+yoff,(7+pulse*4)*camZoom,0,Math.PI*2);
@@ -823,14 +823,14 @@ function render(){
       ctx.fillStyle='#1a0a00';ctx.font=`bold ${7*camZoom}px sans-serif`;ctx.textAlign='center';
       ctx.fillText('!',px,py+yoff+2.5*camZoom);
     } else if(sv.status==='rescued'){
-      // SOLID GREEN — rescued
+      // SOLID GREEN: rescued
       ctx.beginPath();ctx.arc(px,py+yoff,5*camZoom,0,Math.PI*2);
       ctx.fillStyle='#22c55e';ctx.fill();
       ctx.strokeStyle='#15803d';ctx.lineWidth=1;ctx.stroke();
       ctx.fillStyle='white';ctx.font=`bold ${6*camZoom}px sans-serif`;ctx.textAlign='center';
       ctx.fillText('✓',px,py+yoff+2*camZoom);
     } else if(sv.status==='lost'){
-      // MAROON FLASHING — lost to fire
+      // MAROON FLASHING: lost to fire
       const pulse2=Math.sin(now/400)*0.5+0.5;
       ctx.beginPath();ctx.arc(px,py+yoff,(5+pulse2*2)*camZoom,0,Math.PI*2);
       ctx.fillStyle=`rgba(127,${Math.round(pulse2*20)},${Math.round(pulse2*20)},${0.7+pulse2*0.3})`;ctx.fill();
@@ -1001,7 +1001,7 @@ function endSim(){
   running=false;clearTimeout(tid);
   document.getElementById('bplay').style.display='inline-flex';
   document.getElementById('bpause').style.display='none';
-  log('done',`▣ Complete — ${step} steps`);
+  log('done',`▣ Complete: ${step} steps`);
   setTimeout(showReport,600);
 }
 function showReport(){
@@ -1025,7 +1025,7 @@ function showReport(){
   document.getElementById('rep-grade').innerHTML=`<span class="rgrade" style="color:${gcol}">${grade}</span><span class="rgrade-l">Score: ${score.toFixed(1)}/100</span>`;
   document.getElementById('rep-grade').style.cssText=`text-align:center;margin:16px 0;padding:18px;border-radius:6px;background:${gcol}15;border:1px solid ${gcol}44;`;
   document.getElementById('rep-table').innerHTML=[
-    ...drones.map(d=>`<tr><td>Drone ${d.id}</td><td>UAV Scout</td><td>${CFG.droneAlgo.toUpperCase()}</td><td>${d.explored} cells, ${d.handoffs} handoffs</td><td>—</td></tr>`),
+    ...drones.map(d=>`<tr><td>Drone ${d.id}</td><td>UAV Scout</td><td>${CFG.droneAlgo.toUpperCase()}</td><td>${d.explored} cells, ${d.handoffs} handoffs</td><td>N/A</td></tr>`),
     ...ugvs.map(u=>`<tr><td>UGV ${u.id}</td><td>Ground Rescue</td><td>${CFG.ugvAlgo.toUpperCase()}</td><td>${u.rescued} rescued</td><td>${u.dist} steps</td></tr>`),
     ...firetrucks.map(ft=>`<tr><td>FireTruck ${ft.id}</td><td>Suppression</td><td>Greedy</td><td>${ft.suppressed} cells suppressed</td><td>${ft.dist} steps</td></tr>`)
   ].join('');
@@ -1033,11 +1033,11 @@ function showReport(){
   document.getElementById('rep-notes').innerHTML=`
     <b>Fairness Analysis (original paper method)</b><br>
     UGV rescue Gini coefficient: <b>${g.toFixed(4)}</b> (0 = perfectly equal)<br>
-    ${g<0.1?'✓ Excellent — QMIX maintained balanced workload':g<0.25?'✓ Good — minor load imbalance':'⚠ Imbalance — consider increasing fairness weight'}<br>
+    ${g<0.1?'✓ Excellent: QMIX maintained balanced workload':g<0.25?'✓ Good: minor load imbalance':'⚠ Imbalance: consider increasing fairness weight'}<br>
     Fairness reward r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t embedded in QMIX Q-value<br><br>
     <b>Algorithm Notes</b><br>
-    UAV (${CFG.droneAlgo.toUpperCase()}): ${CFG.droneAlgo==='mappo'?'Coordination penalty drove systematic spread.':CFG.droneAlgo==='boids'?'Emergent cohesion/separation produced coverage.':'Unguided — inefficient.'}<br>
-    UGV (${CFG.ugvAlgo.toUpperCase()}): ${CFG.ugvAlgo==='qmix'?'Value decomposition maintained fair rescue distribution.':CFG.ugvAlgo==='greedy'?'Nearest-first — fast but no fairness.':'Random baseline.'}<br>
+    UAV (${CFG.droneAlgo.toUpperCase()}): ${CFG.droneAlgo==='mappo'?'Coordination penalty drove systematic spread.':CFG.droneAlgo==='boids'?'Emergent cohesion/separation produced coverage.':'Unguided, inefficient.'}<br>
+    UGV (${CFG.ugvAlgo.toUpperCase()}): ${CFG.ugvAlgo==='qmix'?'Value decomposition maintained fair rescue distribution.':CFG.ugvAlgo==='greedy'?'Nearest-first, fast but no fairness.':'Random baseline.'}<br>
     Fire Trucks: Greedy nearest-fire targeting, suppresses 5-cell radius on arrival.`;
   document.getElementById('report').classList.add('show');
 }
@@ -1079,7 +1079,7 @@ function initSim(){
   document.getElementById('m-fi').textContent='0%';
   document.getElementById('m-ex').textContent='0%';
   document.getElementById('epbar').style.width='0%';
-  log('info',`Init — ${CFG.biome} seed:${CFG.seed} | ${CFG.nDrones} UAV (${CFG.droneAlgo}) + ${CFG.nUGV} UGV (${CFG.ugvAlgo}) + ${CFG.nFT} FireTruck`);
+  log('info',`Init: ${CFG.biome} seed:${CFG.seed} | ${CFG.nDrones} UAV (${CFG.droneAlgo}) + ${CFG.nUGV} UGV (${CFG.ugvAlgo}) + ${CFG.nFT} FireTruck`);
   log('info',`Wind: ${windSpd.toFixed(1)}× dir:(${wind[0].toFixed(1)},${wind[1].toFixed(1)}) | ${totalSv} survivors`);
   render();
 }
@@ -1094,7 +1094,7 @@ function setAlgo(type,btn){
   const el=document.getElementById(id),out=document.getElementById(vid);
   if(el&&out)el.addEventListener('input',()=>out.textContent=el.value);
 });
-// Seed number input — hide spinner arrows via CSS, numbers only
+// Seed number input: hide spinner arrows via CSS, numbers only
 const seedEl=document.getElementById('seed-sl');
 if(seedEl){
   seedEl.addEventListener('keydown',e=>{if(['e','E','+','-','.'].includes(e.key))e.preventDefault();});

@@ -1,10 +1,10 @@
 """
 ================================================================================
 drone_ugv_sim.py
-Area Disaster Response — Drone–UGV Cooperative Rescue Simulation Engine
+Area Disaster Response: Drone–UGV Cooperative Rescue Simulation Engine
 
 Author: Trung Hieu Pham (Jack Pham)
-Advisors: Dr. Adam Thorpe, Dr. Ufuk Topcu — UT Austin
+Advisors: Dr. Adam Thorpe, Dr. Ufuk Topcu, UT Austin
 Funding: NSF REU Site: CI Research 4 Social Change, Award #2150390
 
 This module provides:
@@ -93,7 +93,7 @@ def noise2(x: float, y: float, seed: int = 0) -> float:
     return a + (b - a) * u + (c - a) * v + (d - c - b + a) * u * v
 
 def fbm(x: float, y: float, seed: int = 0, octaves: int = 4) -> float:
-    """Fractional Brownian Motion — layered noise for realistic terrain."""
+    """Fractional Brownian Motion: layered noise for realistic terrain."""
     v, amp, freq, total = 0.0, 0.5, 1.0, 0.0
     for i in range(octaves):
         v += noise2(x * freq, y * freq, seed + i * 997) * amp
@@ -276,12 +276,12 @@ def fairness_reward(performances: List[float], eps: float = 1e-7) -> List[float]
 
     Parameters
     ----------
-    performances : list of float — e_t^i for each agent
+    performances : list of float, e_t^i for each agent
     eps          : numerical stability constant ε
 
     Returns
     -------
-    rewards : list of float — lower = fairer
+    rewards : list of float, lower = fairer
     """
     e_bar = max(np.mean(performances), eps)
     return [(eps + abs(e / e_bar - 1)) / e_bar for e in performances]
@@ -292,7 +292,7 @@ class DroneSwarm:
     """
     Fleet of UAV scouts. Policies: MAPPO, Boids+RL, Random.
 
-    Key method: step(world) — advances all drones one timestep,
+    Key method: step(world), which advances all drones one timestep,
     scanning terrain and updating world.belief.
     """
     SCAN_RADIUS = 4

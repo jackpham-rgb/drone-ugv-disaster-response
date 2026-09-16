@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Research Notebook — Area Disaster Response</title>
+<title>Research Notebook: Area Disaster Response</title>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -156,7 +156,7 @@ footer a{color:var(--blue);text-decoration:none;}
     <div class="cell-type">Markdown</div>
     <div class="md-cell">
       <h2>1. Background and Motivation</h2>
-      <p>As disaster frequency and severity increase globally — wildfires, earthquakes, urban floods — the need for autonomous, coordinated multi-robot systems becomes critical. Human responders face dangerous conditions where robotic teams can be deployed first to locate survivors and navigate unsafe terrain.</p>
+      <p>As disaster frequency and severity increase globally (wildfires, earthquakes, urban floods), the need for autonomous, coordinated multi-robot systems becomes critical. Human responders face dangerous conditions where robotic teams can be deployed first to locate survivors and navigate unsafe terrain.</p>
       <p>The <b>original REU paper (Pham et al., 2024)</b> developed a single-tier system using LP + FE-MADDPG + CBS on a 2D grid. This notebook extends that work into a more realistic two-tier system:</p>
       <ul>
         <li><b>Tier 1 (Air):</b> UAV drones scout terrain, building a shared belief map of the environment</li>
@@ -179,7 +179,7 @@ footer a{color:var(--blue);text-decoration:none;}
           <tr><td><code>A</code></td><td>Action</td><td>Drones: 8-directional movement + wait. UGVs: 4-directional movement (terrain constrained) + wait</td></tr>
           <tr><td><code>R</code></td><td>Reward</td><td>Drones: new cells discovered − revisit penalty − crowding penalty. UGVs: survivors rescued + fairness term</td></tr>
           <tr><td><code>π</code></td><td>Policy</td><td>MAPPO (drones) or QMIX (UGVs), switchable at runtime</td></tr>
-          <tr><td><code>γ</code></td><td>Discount</td><td>0.95 — weights near-term rewards more heavily, encouraging fast rescue</td></tr>
+          <tr><td><code>γ</code></td><td>Discount</td><td>0.95, weights near-term rewards more heavily, encouraging fast rescue</td></tr>
         </tbody>
       </table>
     </div>
@@ -232,10 +232,10 @@ state_size = GRID**<span class="num">2</span> * (N_DRONES + N_UGV) * <span class
   <div class="eq-block">
     <div class="eq-f">r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t</div>
     <div class="eq-d">
-      <code>r_t^i</code> — reward for agent i at timestep t &nbsp;&nbsp;
-      <code>ε = 1e-7</code> — prevents division by zero<br>
-      <code>e_t^i</code> — performance of agent i (inverse distance to nearest assigned target)<br>
-      <code>ē_t</code> — mean performance across all n agents at time t<br><br>
+      <code>r_t^i</code>: reward for agent i at timestep t &nbsp;&nbsp;
+      <code>ε = 1e-7</code>: prevents division by zero<br>
+      <code>e_t^i</code>: performance of agent i (inverse distance to nearest assigned target)<br>
+      <code>ē_t</code>: mean performance across all n agents at time t<br><br>
       <b>In QMIX:</b> this term is subtracted from Q_i(s, a) when selecting rescue targets,
       penalizing agents that are already performing above average (already have more rescues).
       The global mixing network then combines these adjusted Q-values monotonically.
@@ -285,7 +285,7 @@ unequal = [<span class="num">0.1</span>, <span class="num">0.5</span>, <span cla
     <div class="cell-type">Markdown</div>
     <div class="md-cell">
       <h2>4. Architecture: MAPPO + QMIX</h2>
-      <h3>4.1 Drone Policy — MAPPO</h3>
+      <h3>4.1 Drone Policy: MAPPO</h3>
       <p><b>Multi-Agent Proximal Policy Optimization (MAPPO)</b> uses a centralized critic during training and decentralized actors during execution. This is the CTDE (Centralized Training, Decentralized Execution) framework.</p>
       <ul>
         <li><b>Observation:</b> Each drone sees a 9×9 local belief map window + global exploration coverage</li>
@@ -304,7 +304,7 @@ unequal = [<span class="num">0.1</span>, <span class="num">0.5</span>, <span cla
   <div class="cell" id="s4b">
     <div class="cell-type">Markdown</div>
     <div class="md-cell">
-      <h3>4.2 Ground Robot Policy — QMIX</h3>
+      <h3>4.2 Ground Robot Policy: QMIX</h3>
       <p><b>QMIX</b> extends Q-learning to multi-agent systems via value decomposition. Each agent i maintains a local Q-value <code>Q_i(o_i, a_i)</code>, and a mixing network combines these into a global Q-value monotonically:</p>
     </div>
   </div>
@@ -331,7 +331,7 @@ unequal = [<span class="num">0.1</span>, <span class="num">0.5</span>, <span cla
         <li><b>Mountain / Wildfire:</b> Elevation heightmap with water (impassable), grass, forest (high fuel), rock, and peaks. Fire ignites in fuel-rich valleys and ridges.</li>
         <li><b>Urban / City:</b> 4×4 block grid with streets and procedural buildings (impassable). Fire spreads along streets and through plaza areas.</li>
       </ul>
-      <h3>Fire spread model — cellular automaton</h3>
+      <h3>Fire spread model: cellular automaton</h3>
       <p>Fire evolves each step as a stochastic cellular automaton. Each burning cell can ignite passable neighbors with probability:</p>
     </div>
   </div>
@@ -339,8 +339,8 @@ unequal = [<span class="num">0.1</span>, <span class="num">0.5</span>, <span cla
   <div class="eq-block">
     <div class="eq-f">P(ignite) = rate × fuel[r][c] × wind_factor × neighbors_burning</div>
     <div class="eq-d">
-      <code>rate</code> — configurable base spread rate (1–10)<br>
-      <code>fuel[r][c]</code> — terrain-dependent fuel load (forest: 0.8, grass: 0.4, street: 0.3, rock: 0.02)<br>
+      <code>rate</code>: configurable base spread rate (1–10)<br>
+      <code>fuel[r][c]</code>: terrain-dependent fuel load (forest: 0.8, grass: 0.4, street: 0.3, rock: 0.02)<br>
       <code>wind_factor</code> = 1 + (dc·wind_x + dr·wind_z) × wind_speed × 0.4<br>
       Wind direction and speed are randomized per seed, creating non-uniform spread patterns.
     </div>
@@ -402,10 +402,10 @@ unequal = [<span class="num">0.1</span>, <span class="num">0.5</span>, <span cla
   </div>
 
   <div class="m-strip">
-    <div class="mc"><div class="mc-l">MAPPO+QMIX — Save rate</div><div class="mc-v" style="color:var(--green)">91%</div><div class="mc-s">avg over 10 seeds</div></div>
-    <div class="mc"><div class="mc-l">Random+Random — Save rate</div><div class="mc-v" style="color:var(--orange)">34%</div><div class="mc-s">baseline</div></div>
-    <div class="mc"><div class="mc-l">MAPPO+QMIX — Gini</div><div class="mc-v" style="color:var(--blue)">0.031</div><div class="mc-s">UGV load balance</div></div>
-    <div class="mc"><div class="mc-l">Greedy — Gini</div><div class="mc-v" style="color:var(--orange)">0.287</div><div class="mc-s">unfair distribution</div></div>
+    <div class="mc"><div class="mc-l">MAPPO+QMIX: Save rate</div><div class="mc-v" style="color:var(--green)">91%</div><div class="mc-s">avg over 10 seeds</div></div>
+    <div class="mc"><div class="mc-l">Random+Random: Save rate</div><div class="mc-v" style="color:var(--orange)">34%</div><div class="mc-s">baseline</div></div>
+    <div class="mc"><div class="mc-l">MAPPO+QMIX: Gini</div><div class="mc-v" style="color:var(--blue)">0.031</div><div class="mc-s">UGV load balance</div></div>
+    <div class="mc"><div class="mc-l">Greedy: Gini</div><div class="mc-v" style="color:var(--orange)">0.287</div><div class="mc-s">unfair distribution</div></div>
   </div>
 
   <div class="chart-2col">

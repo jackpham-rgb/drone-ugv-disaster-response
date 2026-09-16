@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Area Disaster Response — Research Portal</title>
+<title>Area Disaster Response: Research Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -126,9 +126,9 @@ footer a { color:var(--blue); text-decoration:none; }
   </div>
   <h1>Drone–UGV Cooperative Rescue:<br><em>Fair Task Allocation and Path Planning<br>for Disaster Response</em></h1>
   <div class="byline">
-    <b>Trung Hieu Pham</b> — Cypress College &nbsp;·&nbsp;
-    Dr. Adam Thorpe — Center for Autonomy, UT Austin &nbsp;·&nbsp;
-    Dr. Ufuk Topcu — Dept. of Aerospace Engineering, UT Austin
+    <b>Trung Hieu Pham</b>, Cypress College &nbsp;·&nbsp;
+    Dr. Adam Thorpe, Center for Autonomy, UT Austin &nbsp;·&nbsp;
+    Dr. Ufuk Topcu, Dept. of Aerospace Engineering, UT Austin
   </div>
   <p class="abstract">
     This project develops a two-tier cooperative multi-agent system for autonomous disaster response.
@@ -215,7 +215,7 @@ footer a { color:var(--blue); text-decoration:none; }
         <td>Fairness reward</td>
         <td>FE reward <span class="tag tag-orig">Original paper</span></td>
         <td>Load balancing</td>
-        <td>r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t — carried forward from REU paper into QMIX Q-value.</td>
+        <td>r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t, carried forward from REU paper into QMIX Q-value.</td>
       </tr>
       <tr>
         <td>Pathfinding</td>
@@ -233,17 +233,17 @@ footer a { color:var(--blue); text-decoration:none; }
   </table>
 
   <!-- FAIRNESS EQUATION -->
-  <div class="section-title">Fairness reward — connection to original paper</div>
+  <div class="section-title">Fairness reward: connection to original paper</div>
   <div class="eq-block">
     <div class="eq-formula">r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t</div>
     <div class="eq-desc">
-      <code>r_t^i</code> — reward for agent i at timestep t &nbsp;·&nbsp;
-      <code>ε = 1e-7</code> — numerical stability constant<br>
-      <code>e_t^i</code> — performance of agent i (inverse distance to nearest assigned target)<br>
-      <code>ē_t</code> — mean performance across all n agents at time t<br><br>
+      <code>r_t^i</code>: reward for agent i at timestep t &nbsp;·&nbsp;
+      <code>ε = 1e-7</code>: numerical stability constant<br>
+      <code>e_t^i</code>: performance of agent i (inverse distance to nearest assigned target)<br>
+      <code>ē_t</code>: mean performance across all n agents at time t<br><br>
       In the original paper (2024), this reward drove FE-MADDPG policy gradients.
       In this system, it is embedded directly into the QMIX per-agent Q-value function,
-      combining value decomposition with the same fairness objective — a novel integration.
+      combining value decomposition with the same fairness objective, a novel integration.
     </div>
   </div>
 
