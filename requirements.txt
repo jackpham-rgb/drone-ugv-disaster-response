@@ -1,0 +1,16 @@
+numpy
+scipy
+matplotlib
+pandas
+# scikit-learn is NOT required: src/marl/coverage/kmeans_tsp.py implements
+# K-means in plain NumPy because scikit-learn's compiled clustering extension
+# was blocked by an Application Control policy on the machine this was built
+# on. Install it and swap in sklearn.cluster.KMeans if that is not an issue
+# for you.
+cvxpy
+torch
+pettingzoo>=1.24
+gymnasium
+supersuit
+hydra-core
+wandb
