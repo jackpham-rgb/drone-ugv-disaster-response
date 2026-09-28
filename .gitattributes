@@ -1,0 +1,5 @@
+# Keep the browser demo and notebook out of GitHub's language stats so the
+# repo reads as the Python MARL research project it is, not a web project.
+*.html linguist-documentation
+web/** linguist-vendored
+*.ipynb linguist-documentation
