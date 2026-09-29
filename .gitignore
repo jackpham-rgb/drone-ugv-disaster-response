@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 train.log
+qmix_train.log
+mappo_train.log
+# Third-party clone used to run QMIX/MAPPO baselines (see docs/research_elevation.md).
+# Not this project's code; clone it fresh rather than committing it here.
+epymarl/
