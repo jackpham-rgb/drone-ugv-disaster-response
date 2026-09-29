@@ -1,0 +1,16 @@
+{
+  "QMIX": {
+    "final_team_return": -6.000000000000004,
+    "final_per_agent": -1.500000000000001,
+    "n_points": 11
+  },
+  "MAPPO": {
+    "final_team_return": -6.6200000000000045,
+    "final_per_agent": -1.6550000000000011,
+    "n_points": 11
+  },
+  "IPPO": {
+    "final_per_agent_mean": -1.957777777777715,
+    "n_seeds": 3
+  }
+}
