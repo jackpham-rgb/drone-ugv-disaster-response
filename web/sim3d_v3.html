@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0f2f5;--panel:#ffffff;--panel2:#f5f6f8;--border:#dde1e7;--border2:#b8bec8;
+  --bg:#eef0f3;--panel:#ffffff;--panel2:#f5f6f8;--border:#dde1e7;--border2:#b8bec8;
   --text:#1a2030;--text2:#5a6478;--text3:#9aa0b0;
   --blue:#1d4ed8;--blue-l:#eff6ff;
   --green:#15803d;--green-l:#f0fdf4;
@@ -59,7 +59,7 @@ input[type=number]{-moz-appearance:textfield;}
 .ac.act{background:var(--blue-l);border-color:rgba(29,78,216,0.25);}
 .acb{position:absolute;left:0;top:0;bottom:0;width:3px;}
 .act-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;padding-left:9px;}
-.a-ico{font-size:14px;}
+.a-sw{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
 .a-name{font-family:var(--mono);font-size:11px;font-weight:500;}
 .a-role{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:1px;}
 .a-st{margin-left:auto;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;}
@@ -71,9 +71,6 @@ input[type=number]{-moz-appearance:textfield;}
 .apb{height:2px;background:var(--border);border-radius:1px;margin:3px 9px 3px;}
 .apbf{height:2px;border-radius:1px;transition:width 0.4s;}
 .ainf{font-family:var(--mono);font-size:8px;color:var(--text3);padding-left:9px;}
-.anums{display:flex;gap:8px;padding-left:9px;margin-top:3px;}
-.anum{font-family:var(--mono);font-size:8px;color:var(--text2);}
-.anum b{color:var(--text);}
 
 /* ALGO */
 #algo-sec{padding:9px 11px;border-top:1px solid var(--border);flex-shrink:0;background:var(--panel2);}
@@ -81,11 +78,12 @@ input[type=number]{-moz-appearance:textfield;}
 
 /* CENTER */
 #center{display:flex;flex-direction:column;}
-#cw{flex:1;position:relative;overflow:hidden;background:#d4e4f0;}
-#simCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;}
+#cw{flex:1;position:relative;overflow:hidden;background:#c7ccd4;}
+#simCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;display:block;}
 #simCanvas:active{cursor:grabbing;}
-#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(240,242,245,0.92);z-index:10;backdrop-filter:blur(4px);}
-#overlay h2{font-family:var(--serif);font-size:26px;color:var(--text);margin-bottom:8px;}
+#hud{position:absolute;left:10px;top:10px;font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.6;pointer-events:none;}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(238,240,243,0.94);z-index:10;}
+#overlay h2{font-family:var(--serif);font-size:24px;color:var(--text);margin-bottom:8px;font-weight:600;}
 #overlay p{font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:3px;}
 
 /* CTRL */
@@ -116,7 +114,8 @@ canvas.mini{width:100%;height:60px;display:block;}
 
 /* LEGEND */
 .leg{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;flex-wrap:wrap;gap:5px;}
-.lp{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid;display:flex;align-items:center;gap:4px;}
+.lp{font-family:var(--mono);font-size:8px;padding:3px 7px;border-radius:3px;border:1px solid var(--border2);display:flex;align-items:center;gap:5px;color:var(--text2);background:var(--panel2);}
+.lp-sw{width:8px;height:8px;border-radius:2px;flex-shrink:0;display:inline-block;}
 
 /* LOG */
 #elog{flex:1;overflow-y:auto;padding:7px;}
@@ -127,7 +126,7 @@ canvas.mini{width:100%;height:60px;display:block;}
 .li{border-color:#3b82f6;}.la{border-color:#f97316;}.ld{border-color:#22c55e;}.lf{border-color:#ef4444;}.lc{border-color:#8b5cf6;}
 
 /* REPORT */
-#report{display:none;position:fixed;inset:0;z-index:100;background:rgba(26,32,48,0.5);align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#report{display:none;position:fixed;inset:0;z-index:100;background:rgba(26,32,48,0.5);align-items:center;justify-content:center;}
 #report.show{display:flex;}
 #rbox{background:var(--panel);border:1px solid var(--border2);border-radius:8px;width:680px;max-height:88vh;overflow-y:auto;padding:32px 36px;box-shadow:0 8px 32px rgba(0,0,0,0.15);}
 #rbox h2{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:4px;}
@@ -157,7 +156,7 @@ canvas.mini{width:100%;height:60px;display:block;}
   <div class="nlinks">
     <a href="index.html">Overview</a>
     <a href="notebook.html">Notebook</a>
-    <a href="sim3d_v2.html" class="active">3D Simulation</a>
+    <a href="sim3d_v3.html" class="active">3D Simulation</a>
     <a href="visualizations.html">Data Viz</a>
   </div>
 </nav>
@@ -214,19 +213,20 @@ canvas.mini{width:100%;height:60px;display:block;}
 <div id="center">
   <div id="cw">
     <canvas id="simCanvas"></canvas>
+    <div id="hud"></div>
     <div id="overlay">
       <h2>Area Disaster Response</h2>
-      <p>Isometric 3D · Drone–UGV–FireTruck Cooperative Rescue</p>
+      <p>3D · Drone-UGV-FireTruck cooperative rescue</p>
       <p>MAPPO scouts + QMIX robots + fire suppression</p>
-      <p style="margin-top:8px;color:var(--text3)">Drag to rotate · Scroll to zoom · Configure left, then PLAY</p>
+      <p style="margin-top:8px;color:var(--text3)">Drag to orbit, scroll to zoom. Configure left, then Play.</p>
     </div>
   </div>
   <div id="ctrl">
-    <button class="btn pri" id="bplay">▶ Play</button>
-    <button class="btn" id="bstep">⏭ Step</button>
-    <button class="btn" id="bpause" style="display:none">⏸ Pause</button>
-    <button class="btn dan" id="breset">↺ Reset</button>
-    <button class="btn" id="breport">📋 Report</button>
+    <button class="btn pri" id="bplay">Play</button>
+    <button class="btn" id="bstep">Step</button>
+    <button class="btn" id="bpause" style="display:none">Pause</button>
+    <button class="btn dan" id="breset">Reset</button>
+    <button class="btn" id="breport">Report</button>
     <div class="ep-wrap">
       <div class="ep-l">Step</div>
       <div class="ep-v" id="cstep">0</div>
@@ -235,7 +235,7 @@ canvas.mini{width:100%;height:60px;display:block;}
     <div class="spd-w">
       <div class="ep-l">Speed</div>
       <input type="range" id="spd" min="1" max="10" value="4">
-      <div class="ep-l" id="spdv">4×</div>
+      <div class="ep-l" id="spdv">4x</div>
     </div>
   </div>
 </div>
@@ -247,27 +247,27 @@ canvas.mini{width:100%;height:60px;display:block;}
     <div class="mc"><div class="mc-l">SAVED</div><div class="mc-v" style="color:var(--green)" id="m-sv">0</div><div class="mc-s">survivors</div></div>
     <div class="mc"><div class="mc-l">FIRE</div><div class="mc-v" style="color:var(--red)" id="m-fi">0%</div><div class="mc-s">coverage</div></div>
     <div class="mc"><div class="mc-l">EXPLORED</div><div class="mc-v" style="color:var(--blue)" id="m-ex">0%</div><div class="mc-s">map coverage</div></div>
-    <div class="mc"><div class="mc-l">HANDOFFS</div><div class="mc-v" style="color:#7c3aed" id="m-co">0</div><div class="mc-s">UAV→UGV</div></div>
+    <div class="mc"><div class="mc-l">HANDOFFS</div><div class="mc-v" style="color:#7c3aed" id="m-co">0</div><div class="mc-s">UAV to UGV</div></div>
     <div class="mc"><div class="mc-l">SUPPRESSED</div><div class="mc-v" style="color:#ea580c" id="m-sup">0</div><div class="mc-s">fire cells</div></div>
     <div class="mc"><div class="mc-l">LOST</div><div class="mc-v" style="color:var(--red)" id="m-lost">0</div><div class="mc-s">to fire</div></div>
   </div>
   <div class="mblk">
-    <div class="mbl">// Explore % vs Fire % over time</div>
+    <div class="mbl">// Explore % vs fire % over time</div>
     <canvas class="mini" id="ch-prog" height="60"></canvas>
   </div>
   <div id="bmap-wrap">
-    <div class="bmap-l">// Drone Belief Map</div>
+    <div class="bmap-l">// Drone belief map</div>
     <canvas id="bmap" height="90"></canvas>
   </div>
   <div class="leg">
-    <div class="lp" style="background:#fef9c3;border-color:#d97706;color:#92400e">🟡 Undiscovered</div>
-    <div class="lp" style="background:var(--green-l);border-color:var(--green);color:var(--green)">🟢 Rescued</div>
-    <div class="lp" style="background:var(--red-l);border-color:var(--red);color:var(--red)">🔴 Lost</div>
-    <div class="lp" style="background:#fff;border-color:#666;color:#444">🚁 Drone</div>
-    <div class="lp" style="background:#fff;border-color:#666;color:#444">🚗 UGV</div>
-    <div class="lp" style="background:#fff;border-color:#666;color:#444">🚒 FireTruck</div>
+    <div class="lp"><span class="lp-sw" style="background:#fbbf24"></span>Undiscovered</div>
+    <div class="lp"><span class="lp-sw" style="background:#22c55e"></span>Rescued</div>
+    <div class="lp"><span class="lp-sw" style="background:#7f1d1d"></span>Lost</div>
+    <div class="lp"><span class="lp-sw" style="background:#2563eb"></span>Drone</div>
+    <div class="lp"><span class="lp-sw" style="background:#ea580c"></span>UGV</div>
+    <div class="lp"><span class="lp-sw" style="background:#b91c1c"></span>Fire truck</div>
   </div>
-  <div class="sh">// Event Log</div>
+  <div class="sh">// Event log</div>
   <div id="elog"></div>
 </div>
 </div>
@@ -285,18 +285,19 @@ canvas.mini{width:100%;height:60px;display:block;}
     </table>
     <div class="rnotes" id="rep-notes"></div>
     <button class="r-btn" onclick="document.getElementById('report').classList.remove('show')">Close</button>
-    <button class="r-btn" onclick="resetSim()">New Simulation</button>
+    <button class="r-btn" onclick="resetSim()">New simulation</button>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 /* ================================================================
-   Area Disaster Response: 3D Isometric Simulation
-   Agents: UAV Drones (MAPPO), UGV Ground Robots (QMIX), Fire Trucks
-   Victim colors: gold/yellow flashing = undiscovered,
-                  green = rescued, maroon = lost to fire
-   Rotation: mouse drag
-   Background: bright daylight terrain
+   Area Disaster Response: 3D simulation
+   Agents: UAV drones (MAPPO), UGV ground robots (QMIX), fire trucks
+   Rendering: three.js (WebGL), OrbitControls for rotate and zoom.
+   Simulation logic (terrain, fire spread, A*, policies) is plain
+   JS and unrelated to the renderer below it.
    ================================================================ */
 
 // ── RNG ──────────────────────────────────────────────────
@@ -334,48 +335,7 @@ let collabs=0,saved=0,suppressed=0,lost=0,totalSv=0;
 let explHist=[],fireHist=[];
 let wind=[1,0.4],windSpd=1.0;
 
-// ── CANVAS + ISO ──────────────────────────────────────────
-const canvas=document.getElementById('simCanvas');
-const ctx=canvas.getContext('2d');
-
-// Rotation state
-let camAngle=0; // 0..3 (four 90° increments), or smooth
-let isDragging=false,lastMX=0;
-let camRot=0.3; // radians, smooth rotation
-let camZoom=1.0;
-
-const TW=28,TH=14; // tile width/height for iso
-
-function iso(col,row,h){
-  // Rotatable isometric projection
-  const x=(col-row)*Math.cos(camRot)-(col+row)*Math.sin(camRot)*0.5;
-  const y=(col+row)*Math.cos(camRot)*0.5+(col-row)*Math.sin(camRot)-h*0.55;
-  return[canvas.width/2+x*TW/2*camZoom, canvas.height*0.45+y*TH/2*camZoom];
-}
-
-function resizeCanvas(){
-  const cw=document.getElementById('cw');
-  canvas.width=cw.clientWidth;canvas.height=cw.clientHeight;
-}
-window.addEventListener('resize',()=>{resizeCanvas();render();});
-
-// Mouse rotation
-canvas.addEventListener('mousedown',e=>{isDragging=true;lastMX=e.clientX;});
-window.addEventListener('mousemove',e=>{
-  if(!isDragging)return;
-  const dx=e.clientX-lastMX;
-  camRot+=dx*0.008;
-  lastMX=e.clientX;
-  render();
-});
-window.addEventListener('mouseup',()=>isDragging=false);
-canvas.addEventListener('wheel',e=>{
-  e.preventDefault();
-  camZoom=Math.max(0.4,Math.min(2.0,camZoom-e.deltaY*0.001));
-  render();
-},{passive:false});
-
-// ── TERRAIN ──────────────────────────────────────────────
+// ── TERRAIN GENERATION (data only, no drawing) ─────────────
 function genTerrain(){
   terrain=[];fire=[];belief=[];fuel=[];
   const s=CFG.seed;
@@ -424,7 +384,7 @@ function genTerrain(){
   totalSv=survivors.length;
 }
 
-// ── SPAWN AGENTS ──────────────────────────────────────────
+// ── SPAWN AGENTS (data only) ────────────────────────────────
 const D_COLS=['#2563eb','#7c3aed','#0891b2','#059669','#1d4ed8','#6d28d9'];
 const U_COLS=['#ea580c','#16a34a','#ca8a04','#9333ea','#0284c7','#be123c'];
 const F_COLS=['#dc2626','#b91c1c','#7f1d1d','#ef4444'];
@@ -442,7 +402,7 @@ function spawnAgents(){
     const[c,r]=place(i,CFG.nDrones,-3);
     drones.push({id:i,col:c,row:r,h:terrain[r]?.[c]?.h||0,tc:c,tr:r,
       color:D_COLS[i%D_COLS.length],status:'idle',explored:0,handoffs:0,
-      visitMask:new Uint8Array(GRID*GRID),vx:0,vz:0});
+      visitMask:new Uint8Array(GRID*GRID)});
   }
   for(let i=0;i<CFG.nUGV;i++){
     const[c,r]=place(i,CFG.nUGV,0);
@@ -471,7 +431,7 @@ function droneScans(d){
         const sv=survivors.find(s=>s.col===nc&&s.row===nr&&s.status==='unknown');
         if(sv){belief[nr][nc]=B_SRV;sv.status='discovered';d.handoffs++;collabs++;
           document.getElementById('m-co').textContent=collabs;
-          log('info',`🔍 Drone ${d.id} found survivor #${sv.id}`);
+          log('info',`Drone ${d.id} found survivor #${sv.id}`);
         } else belief[nr][nc]=B_CLR;
       }
     }
@@ -500,7 +460,7 @@ function droneAction(d){
       if(belief[tnr][tnc]===B_UNK)score+=1;
       if(d.visitMask[tnr*GRID+tnc])score-=0.25;
     }
-    // Boids: separation from other drones
+    // Separation from other drones
     for(const od of drones){
       if(od.id===d.id)continue;
       const dd=Math.abs(od.col-nc)+Math.abs(od.row-nr);
@@ -532,7 +492,6 @@ function ugvAction(u){
 
 // ── FIRE TRUCK ACTION ─────────────────────────────────────
 function ftAction(ft){
-  // Find nearest known fire cell not already assigned
   let best=null,bestD=999;
   for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
     if(fire[r][c]>0.5){
@@ -583,12 +542,230 @@ function spreadFire(){
           nf[nr][nc]=1;
           if(belief[nr][nc]!==B_UNK)belief[nr][nc]=B_FIRE;
           const sv=survivors.find(s=>s.col===nc&&s.row===nr&&s.status!=='rescued'&&s.status!=='lost');
-          if(sv){sv.status='lost';lost++;document.getElementById('m-lost').textContent=lost;log('fire',`⚠ Survivor ${sv.id} lost to fire`);}
+          if(sv){sv.status='lost';lost++;document.getElementById('m-lost').textContent=lost;log('fire',`Survivor ${sv.id} lost to fire`);}
         }
       }
     }
   }
   fire=nf;
+}
+
+// ================================================================
+// RENDERING (three.js). Reads the state above; never changes it.
+// ================================================================
+const TERRAIN_COLOR={
+  water:[0x7a,0x8f,0xa6], grass:[0x8a,0x98,0x78], forest:[0x5f,0x6f,0x52],
+  rock:[0x9a,0x91,0x86], peak:[0xc9,0xc6,0xc0], building:[0x7d,0x83,0x8c],
+  street:[0x90,0x95,0xa0], plaza:[0xa8,0xa2,0x96], border:[0x4a,0x4e,0x57],
+  clear:[0x93,0xa1,0x84],
+};
+const HEIGHT_SCALE=0.32;
+
+const canvas=document.getElementById('simCanvas');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xc7ccd4);
+
+const camera=new THREE.PerspectiveCamera(42,1,0.1,300);
+camera.position.set(GRID*0.85,GRID*0.85,GRID*0.85);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.08;
+controls.enablePan=false;
+controls.minDistance=GRID*0.5;controls.maxDistance=GRID*2.3;
+controls.minPolarAngle=0.12;controls.maxPolarAngle=Math.PI*0.49;
+controls.target.set(0,1.5,0);
+
+scene.add(new THREE.AmbientLight(0xffffff,0.55));
+const sun=new THREE.DirectionalLight(0xffffff,0.75);
+sun.position.set(GRID*0.6,GRID*1.1,GRID*0.35);
+scene.add(sun);
+
+let terrainMesh=null,overlayMesh=null,overlayCanvas=null,overlayCtx=null,overlayTex=null;
+
+function cellPos(c,r,h){
+  return[c-GRID/2+0.5, h*HEIGHT_SCALE, r-GRID/2+0.5];
+}
+
+function buildTerrainMesh(){
+  if(terrainMesh){scene.remove(terrainMesh);terrainMesh.geometry.dispose();terrainMesh.material.dispose();}
+  if(overlayMesh){scene.remove(overlayMesh);overlayMesh.geometry.dispose();overlayMesh.material.dispose();}
+
+  const n=GRID*GRID;
+  const positions=new Float32Array(n*3);
+  const colors=new Float32Array(n*3);
+  const overlayPositions=new Float32Array(n*3);
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    const i=r*GRID+c;
+    const[x,y,z]=cellPos(c,r,terrain[r][c].h);
+    positions[i*3]=x;positions[i*3+1]=y;positions[i*3+2]=z;
+    overlayPositions[i*3]=x;overlayPositions[i*3+1]=y+0.06;overlayPositions[i*3+2]=z;
+    const col=TERRAIN_COLOR[terrain[r][c].type]||TERRAIN_COLOR.clear;
+    colors[i*3]=col[0]/255;colors[i*3+1]=col[1]/255;colors[i*3+2]=col[2]/255;
+  }
+  const indices=[];
+  for(let r=0;r<GRID-1;r++)for(let c=0;c<GRID-1;c++){
+    const a=r*GRID+c,b=a+1,d=a+GRID,e=d+1;
+    indices.push(a,d,b, b,d,e);
+  }
+
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  const mat=new THREE.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:0.95,metalness:0.02});
+  terrainMesh=new THREE.Mesh(geo,mat);
+  scene.add(terrainMesh);
+
+  overlayCanvas=document.createElement('canvas');
+  overlayCanvas.width=GRID;overlayCanvas.height=GRID;
+  overlayCtx=overlayCanvas.getContext('2d');
+  overlayTex=new THREE.CanvasTexture(overlayCanvas);
+  overlayTex.magFilter=THREE.LinearFilter;overlayTex.minFilter=THREE.LinearFilter;
+
+  const ogeo=new THREE.BufferGeometry();
+  ogeo.setAttribute('position',new THREE.BufferAttribute(overlayPositions,3));
+  const uvs=new Float32Array(n*2);
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){const i=r*GRID+c;uvs[i*2]=(c+0.5)/GRID;uvs[i*2+1]=1-(r+0.5)/GRID;}
+  ogeo.setAttribute('uv',new THREE.BufferAttribute(uvs,2));
+  ogeo.setIndex(indices);
+  const omat=new THREE.MeshBasicMaterial({map:overlayTex,transparent:true,depthWrite:false});
+  overlayMesh=new THREE.Mesh(ogeo,omat);
+  scene.add(overlayMesh);
+}
+
+function updateOverlayTexture(){
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    let rgba='rgba(0,0,0,0)';
+    if(belief[r][c]===B_UNK) rgba='rgba(40,44,54,0.38)';
+    else if(fire[r][c]>0.5) rgba=`rgba(214,66,20,${0.35+Math.min(0.4,fire[r][c]*0.4)})`;
+    else if(belief[r][c]===B_RESC) rgba='rgba(60,170,90,0.28)';
+    overlayCtx.fillStyle=rgba;
+    overlayCtx.fillRect(c,r,1,1);
+  }
+  overlayTex.needsUpdate=true;
+}
+
+// ── Agent meshes ────────────────────────────────────────────
+function makeDrone(color){
+  const g=new THREE.Group();
+  const bodyMat=new THREE.MeshStandardMaterial({color,roughness:0.5});
+  const body=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),bodyMat);
+  g.add(body);
+  const armMat=new THREE.MeshStandardMaterial({color:0x30343c,roughness:0.6});
+  const rotors=[];
+  for(const[dx,dz] of [[0.32,0.32],[-0.32,0.32],[0.32,-0.32],[-0.32,-0.32]]){
+    const arm=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.03,0.03),armMat);
+    arm.position.set(dx*0.5,0,dz*0.5);
+    arm.rotation.y=Math.atan2(dz,dx);
+    g.add(arm);
+    const rotor=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,0.015,10),new THREE.MeshStandardMaterial({color,transparent:true,opacity:0.55}));
+    rotor.position.set(dx,0.03,dz);
+    g.add(rotor);
+    rotors.push(rotor);
+  }
+  g.userData.rotors=rotors;
+  return g;
+}
+function makeGroundBot(color,big){
+  const g=new THREE.Group();
+  const w=big?0.85:0.62, h=big?0.38:0.26, dep=big?0.5:0.4;
+  const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),new THREE.MeshStandardMaterial({color,roughness:0.55}));
+  body.position.y=h/2+0.09;
+  g.add(body);
+  if(big){
+    const cab=new THREE.Mesh(new THREE.BoxGeometry(w*0.32,h*0.7,dep*0.9),new THREE.MeshStandardMaterial({color:0x2a2e35,roughness:0.6}));
+    cab.position.set(-w*0.28,h*0.85,0);
+    g.add(cab);
+  }
+  const wheelMat=new THREE.MeshStandardMaterial({color:0x22252b,roughness:0.9});
+  for(const[dx,dz] of [[w*0.32,dep*0.42],[-w*0.32,dep*0.42],[w*0.32,-dep*0.42],[-w*0.32,-dep*0.42]]){
+    const wheel=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.09,10),wheelMat);
+    wheel.rotation.z=Math.PI/2;
+    wheel.position.set(dx,0.09,dz);
+    g.add(wheel);
+  }
+  return g;
+}
+function makeSurvivorMarker(){
+  const g=new THREE.Group();
+  const m=new THREE.Mesh(new THREE.OctahedronGeometry(0.16,0),new THREE.MeshStandardMaterial({color:0xfbbf24,emissive:0x442200,emissiveIntensity:0.25}));
+  m.position.y=0.35;
+  g.add(m);
+  g.userData.marker=m;
+  return g;
+}
+
+let agentGroup=new THREE.Group();
+scene.add(agentGroup);
+
+function buildAgentMeshes(){
+  agentGroup.clear();
+  for(const d of drones){d.mesh=makeDrone(d.color);agentGroup.add(d.mesh);}
+  for(const u of ugvs){u.mesh=makeGroundBot(u.color,false);agentGroup.add(u.mesh);}
+  for(const ft of firetrucks){ft.mesh=makeGroundBot(ft.color,true);agentGroup.add(ft.mesh);}
+  for(const sv of survivors){sv.mesh=makeSurvivorMarker();sv.mesh.visible=false;agentGroup.add(sv.mesh);}
+  pathLines.forEach(l=>agentGroup.remove(l));
+  pathLines=[];
+}
+
+let pathLines=[];
+function updatePathLines(){
+  pathLines.forEach(l=>{agentGroup.remove(l);l.geometry.dispose();l.material.dispose();});
+  pathLines=[];
+  for(const u of ugvs){
+    if(u.path.length<2)continue;
+    const pts=u.path.map(([pc,pr])=>{const[x,y,z]=cellPos(pc,pr,terrain[pr]?.[pc]?.h||0);return new THREE.Vector3(x,y+0.08,z);});
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    const mat=new THREE.LineDashedMaterial({color:u.color,dashSize:0.35,gapSize:0.25,transparent:true,opacity:0.55});
+    const line=new THREE.Line(geo,mat);
+    line.computeLineDistances();
+    agentGroup.add(line);
+    pathLines.push(line);
+  }
+}
+
+function syncAgentMeshes(){
+  for(const d of drones){
+    const[x,y,z]=cellPos(d.col,d.row,d.h);
+    d.mesh.position.set(x,y+1.1,z);
+    d.mesh.userData.rotors.forEach((rot,i)=>rot.rotation.y+=0.9+i*0.05);
+  }
+  for(const u of ugvs){
+    const[x,y,z]=cellPos(u.col,u.row,u.h);
+    u.mesh.position.set(x,y,z);
+  }
+  for(const ft of firetrucks){
+    const[x,y,z]=cellPos(ft.col,ft.row,ft.h);
+    ft.mesh.position.set(x,y,z);
+  }
+  for(const sv of survivors){
+    if(sv.status==='unknown'){sv.mesh.visible=false;continue;}
+    sv.mesh.visible=true;
+    const[x,y,z]=cellPos(sv.col,sv.row,sv.h);
+    sv.mesh.position.set(x,y,z);
+    const mat=sv.mesh.userData.marker.material;
+    if(sv.status==='discovered'){mat.color.set(0xfbbf24);mat.emissive.set(0x442200);}
+    else if(sv.status==='rescued'){mat.color.set(0x22c55e);mat.emissive.set(0x0b3a1c);}
+    else if(sv.status==='lost'){mat.color.set(0x7f1d1d);mat.emissive.set(0x200000);}
+  }
+  updatePathLines();
+}
+
+function resizeRenderer(){
+  const cw=document.getElementById('cw');
+  const w=cw.clientWidth,h=cw.clientHeight;
+  renderer.setSize(w,h);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',resizeRenderer);
+
+function updateHud(){
+  document.getElementById('hud').innerHTML=
+    `Step ${step} / ${MAX_STEPS}<br>Wind ${windSpd.toFixed(1)}x [${wind[0].toFixed(1)}, ${wind[1].toFixed(1)}]`;
 }
 
 // ── STEP ──────────────────────────────────────────────────
@@ -617,13 +794,13 @@ function simStep(){
         u.rescued++;saved++;
         belief[sv.row][sv.col]=B_RESC;
         document.getElementById('m-sv').textContent=saved;
-        log('done',`✓ UGV ${u.id} rescued survivor ${sv.id}`);
+        log('done',`UGV ${u.id} rescued survivor ${sv.id}`);
         u.status='idle';u.path=[];
       }
     }
     if(!u.target||u.status==='idle'){
       const t=ugvAction(u);
-      if(t){t.assignedTo=u;u.target=t;u.path=astar(u.col,u.row,t.col,t.row);u.pathIdx=0;u.status='navigating';log('action',`🚗 UGV ${u.id} → survivor ${t.id}`);}
+      if(t){t.assignedTo=u;u.target=t;u.path=astar(u.col,u.row,t.col,t.row);u.pathIdx=0;u.status='navigating';log('action',`UGV ${u.id} to survivor ${t.id}`);}
       else u.status='idle';
     }
     if(u.path.length>1&&u.pathIdx<u.path.length-1){
@@ -637,11 +814,9 @@ function simStep(){
 
   // FIRE TRUCKS
   for(const ft of firetrucks){
-    // Check arrival at fire
     if(ft.targetFire){
       const[tr,tc]=ft.targetFire;
       if(ft.col===tc&&ft.row===tr){
-        // Suppress fire in radius
         const supR=2;
         for(let dr=-supR;dr<=supR;dr++)for(let dc=-supR;dc<=supR;dc++){
           const nr=tr+dr,nc=tc+dc;
@@ -653,7 +828,7 @@ function simStep(){
         }
         document.getElementById('m-sup').textContent=suppressed;
         ft.targetFire=null;ft.status='idle';ft.path=[];
-        log('action',`🚒 FireTruck ${ft.id} suppressed fire at (${tc},${tr})`);
+        log('action',`FireTruck ${ft.id} suppressed fire at (${tc},${tr})`);
       }
     }
     if(!ft.targetFire||ft.status==='idle'){
@@ -680,254 +855,10 @@ function simStep(){
 
   const done=survivors.filter(s=>s.status==='rescued').length;
   const lostN=survivors.filter(s=>s.status==='lost').length;
-  updateMiniCharts();drawBeliefMap();updateRoster();render();
+  updateMiniCharts();drawBeliefMap();updateRoster();updateHud();
+  syncAgentMeshes();updateOverlayTexture();
 
   if(done+lostN>=totalSv||step>=MAX_STEPS||fiP>75)endSim();
-}
-
-// ── TERRAIN COLORS (bright, daylight) ─────────────────────
-function terrainFill(t,top){
-  const cols={
-    water: top?'#5b9bd5':'#3d7ab5',
-    grass: top?'#7ec850':'#5a9a30',
-    forest:top?'#3a7a2a':'#2a5a1a',
-    rock:  top?'#b0a090':'#907060',
-    peak:  top?'#f0eeeb':'#d0cecc',
-    building:top?'#8090a8':'#6070 88',
-    street:top?'#c0c8d8':'#a0a8b8',
-    plaza: top?'#d8d0c0':'#b8b0a0',
-    border:top?'#404050':'#303040',
-    clear: top?'#9ad060':'#7ab040',
-  };
-  return cols[t]||(top?'#b0c0a0':'#80a070');
-}
-
-// ── RENDER ────────────────────────────────────────────────
-function render(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  // Sky gradient (bright)
-  const sky=ctx.createLinearGradient(0,0,0,canvas.height);
-  sky.addColorStop(0,'#c8dff0');sky.addColorStop(1,'#e8f4e0');
-  ctx.fillStyle=sky;ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // Sort tiles by render order (back-to-front changes with rotation)
-  const tiles=[];
-  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
-    const[px,py]=iso(c,r,terrain[r][c].h);
-    tiles.push({r,c,px,py});
-  }
-  tiles.sort((a,b)=>a.py-b.py);
-
-  for(const{r,c,px,py} of tiles){
-    const t=terrain[r][c];
-    const h=t.h,tw=TW*camZoom,th2=TH*camZoom;
-
-    // Fog of war: lighter tone if unknown
-    const fog=belief[r][c]===B_UNK?0.45:0;
-
-    let topFill=terrainFill(t.type,true);
-    if(fire[r][c]>0.5){
-      const ft=Date.now()/400;topFill=`rgb(${200+Math.round(50*Math.sin(ft+c+r))},${60+Math.round(30*Math.sin(ft))},20)`;
-    }
-    if(belief[r][c]===B_RESC)topFill='#7ad860';
-
-    // Top diamond
-    ctx.beginPath();
-    ctx.moveTo(px,py-th2);ctx.lineTo(px+tw/2,py);
-    ctx.lineTo(px,py+th2);ctx.lineTo(px-tw/2,py);
-    ctx.closePath();
-    ctx.fillStyle=topFill;ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=0.5;ctx.stroke();
-
-    // Fog overlay on top
-    if(fog>0){
-      ctx.beginPath();
-      ctx.moveTo(px,py-th2);ctx.lineTo(px+tw/2,py);
-      ctx.lineTo(px,py+th2);ctx.lineTo(px-tw/2,py);
-      ctx.closePath();
-      ctx.fillStyle=`rgba(200,215,230,${fog})`;ctx.fill();
-    }
-
-    // Left wall face
-    if(h>0.3&&t.type!=='water'&&t.type!=='border'){
-      const wh=Math.max(4,h*5*camZoom);
-      ctx.beginPath();
-      ctx.moveTo(px-tw/2,py);ctx.lineTo(px,py+th2);
-      ctx.lineTo(px,py+th2+wh);ctx.lineTo(px-tw/2,py+wh);
-      ctx.closePath();
-      ctx.fillStyle=t.type==='building'?'#607080':t.type==='rock'?'#806050':'#5a8040';
-      ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.15)';ctx.lineWidth=0.5;ctx.stroke();
-    }
-    // Right wall face
-    if(h>0.3&&t.type!=='water'&&t.type!=='border'){
-      const wh=Math.max(4,h*5*camZoom);
-      ctx.beginPath();
-      ctx.moveTo(px+tw/2,py);ctx.lineTo(px,py+th2);
-      ctx.lineTo(px,py+th2+wh);ctx.lineTo(px+tw/2,py+wh);
-      ctx.closePath();
-      ctx.fillStyle=t.type==='building'?'#4a5a6a':t.type==='rock'?'#604030':'#3a6020';
-      ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=0.5;ctx.stroke();
-      // Building windows
-      if(t.type==='building'&&h>3){
-        const winH=wh*0.6,winW=tw*0.15;
-        for(let wi=0;wi<2;wi++){
-          ctx.fillStyle='rgba(255,230,100,0.6)';
-          ctx.fillRect(px+tw/4+wi*winW*1.2,py+th2+wh*0.2,winW,winH*0.4);
-        }
-      }
-    }
-
-    // Fire particles
-    if(fire[r][c]>0.5){
-      const ft=Date.now()/250;
-      for(let i=0;i<3;i++){
-        const fx=px+Math.sin(ft+i*2.1)*3*camZoom;
-        const fy=py-th2-2-(Math.abs(Math.sin(ft*1.3+i)))*7*camZoom;
-        ctx.beginPath();ctx.arc(fx,fy,(1.2+Math.sin(ft+i)*0.5)*camZoom,0,Math.PI*2);
-        ctx.fillStyle=`rgba(255,${100+Math.round(80*Math.sin(ft+i))},0,0.9)`;ctx.fill();
-      }
-    }
-  }
-
-  // ── UGV paths ──────────────────────────────────────────
-  for(const u of ugvs){
-    if(u.path.length<2)continue;
-    ctx.strokeStyle=u.color+'66';ctx.lineWidth=1.5*camZoom;ctx.setLineDash([3,5]);
-    ctx.beginPath();
-    u.path.forEach(([pc,pr],i)=>{
-      const[px,py]=iso(pc,pr,terrain[pr]?.[pc]?.h||0);
-      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
-    });
-    ctx.stroke();ctx.setLineDash([]);
-  }
-
-  // ── SURVIVORS ─────────────────────────────────────────
-  const now=Date.now();
-  for(const sv of survivors){
-    const[px,py]=iso(sv.col,sv.row,sv.h);
-    const yoff=-TH*camZoom-6*camZoom;
-
-    if(sv.status==='unknown') continue; // hidden until discovered
-
-    if(sv.status==='discovered'){
-      // GOLD / YELLOW FLASHING: undiscovered but known to drones
-      const pulse=Math.sin(now/280)*0.5+0.5;
-      // Outer flash ring
-      ctx.beginPath();ctx.arc(px,py+yoff,(7+pulse*4)*camZoom,0,Math.PI*2);
-      ctx.fillStyle=`rgba(251,191,36,${0.15+pulse*0.25})`;ctx.fill();
-      // Inner body
-      ctx.beginPath();ctx.arc(px,py+yoff,5*camZoom,0,Math.PI*2);
-      ctx.fillStyle=`rgb(${220+Math.round(35*pulse)},${170+Math.round(20*pulse)},0)`;ctx.fill();
-      ctx.strokeStyle='rgba(120,80,0,0.6)';ctx.lineWidth=1;ctx.stroke();
-      // ! exclamation
-      ctx.fillStyle='#1a0a00';ctx.font=`bold ${7*camZoom}px sans-serif`;ctx.textAlign='center';
-      ctx.fillText('!',px,py+yoff+2.5*camZoom);
-    } else if(sv.status==='rescued'){
-      // SOLID GREEN: rescued
-      ctx.beginPath();ctx.arc(px,py+yoff,5*camZoom,0,Math.PI*2);
-      ctx.fillStyle='#22c55e';ctx.fill();
-      ctx.strokeStyle='#15803d';ctx.lineWidth=1;ctx.stroke();
-      ctx.fillStyle='white';ctx.font=`bold ${6*camZoom}px sans-serif`;ctx.textAlign='center';
-      ctx.fillText('✓',px,py+yoff+2*camZoom);
-    } else if(sv.status==='lost'){
-      // MAROON FLASHING: lost to fire
-      const pulse2=Math.sin(now/400)*0.5+0.5;
-      ctx.beginPath();ctx.arc(px,py+yoff,(5+pulse2*2)*camZoom,0,Math.PI*2);
-      ctx.fillStyle=`rgba(127,${Math.round(pulse2*20)},${Math.round(pulse2*20)},${0.7+pulse2*0.3})`;ctx.fill();
-      ctx.strokeStyle='#7f1d1d';ctx.lineWidth=1;ctx.stroke();
-      ctx.fillStyle='rgba(255,220,220,0.9)';ctx.font=`bold ${6*camZoom}px sans-serif`;ctx.textAlign='center';
-      ctx.fillText('✗',px,py+yoff+2*camZoom);
-    }
-  }
-
-  // ── FIRE TRUCKS ────────────────────────────────────────
-  for(const ft of firetrucks){
-    const[px,py]=iso(ft.col,ft.row,ft.h);
-    const sz=7*camZoom;
-    // Glow
-    ctx.beginPath();ctx.arc(px,py-TH*camZoom,sz*1.8,0,Math.PI*2);
-    ctx.fillStyle=ft.color+'30';ctx.fill();
-    // Body (wider rectangle = truck look)
-    ctx.fillStyle=ft.color;
-    ctx.fillRect(px-sz,py-TH*camZoom-sz*0.6,sz*2,sz*1.2);
-    // Cabin
-    ctx.fillStyle='#cc0000';
-    ctx.fillRect(px-sz,py-TH*camZoom-sz*1.4,sz*0.9,sz*0.8);
-    // Light bar
-    const ltf=Date.now()/200;
-    ctx.fillStyle=Math.sin(ltf)>0?'#ff2200':'#0055ff';
-    ctx.fillRect(px-sz+2,py-TH*camZoom-sz*1.5,sz*0.3,sz*0.2);
-    ctx.fillStyle=Math.sin(ltf)>0?'#0055ff':'#ff2200';
-    ctx.fillRect(px-sz+sz*0.5,py-TH*camZoom-sz*1.5,sz*0.3,sz*0.2);
-    // Label
-    ctx.fillStyle=ft.color;ctx.font=`bold ${7*camZoom}px IBM Plex Mono`;ctx.textAlign='center';
-    ctx.fillText(`FT${ft.id}`,px,py-TH*camZoom+sz+8*camZoom);
-    // Status dot
-    ctx.beginPath();ctx.arc(px+sz+1,py-TH*camZoom-sz,2.5*camZoom,0,Math.PI*2);
-    ctx.fillStyle=ft.status==='idle'?'#94a3b8':ft.status==='responding'?ft.color:'#22c55e';ctx.fill();
-  }
-
-  // ── UGVs ──────────────────────────────────────────────
-  for(const u of ugvs){
-    const[px,py]=iso(u.col,u.row,u.h);
-    const sz=6*camZoom;
-    // Glow
-    ctx.beginPath();ctx.arc(px,py-TH*camZoom,sz*2,0,Math.PI*2);
-    ctx.fillStyle=u.color+'25';ctx.fill();
-    // Body
-    ctx.fillStyle=u.color;
-    ctx.fillRect(px-sz,py-TH*camZoom-sz*0.5,sz*2,sz);
-    // Wheels
-    for(const[wx,wy] of [[-sz+1,sz*0.6],[sz-3,sz*0.6],[-sz+1,-sz*0.3],[sz-3,-sz*0.3]]){
-      ctx.beginPath();ctx.ellipse(px+wx,py-TH*camZoom+wy,2.5*camZoom,1.5*camZoom,0,0,Math.PI*2);
-      ctx.fillStyle='#222';ctx.fill();
-    }
-    ctx.fillStyle='white';ctx.font=`bold ${6*camZoom}px IBM Plex Mono`;ctx.textAlign='center';
-    ctx.fillText(`U${u.id}`,px,py-TH*camZoom+sz*0.35);
-    ctx.beginPath();ctx.arc(px+sz+1,py-TH*camZoom-sz,2.5*camZoom,0,Math.PI*2);
-    ctx.fillStyle=u.status==='idle'?'#94a3b8':u.status==='navigating'?u.color:'#22c55e';ctx.fill();
-  }
-
-  // ── DRONES ────────────────────────────────────────────
-  for(const d of drones){
-    const[px,py]=iso(d.col,d.row,d.h+3.5); // fly high
-    const[spx,spy]=iso(d.col,d.row,d.h);   // shadow
-    // Shadow
-    ctx.beginPath();ctx.ellipse(spx,spy,8*camZoom,4*camZoom,0,0,Math.PI*2);
-    ctx.fillStyle='rgba(0,0,0,0.12)';ctx.fill();
-    // Glow
-    ctx.beginPath();ctx.arc(px,py,9*camZoom,0,Math.PI*2);
-    ctx.fillStyle=d.color+'30';ctx.fill();
-    // Body
-    ctx.fillStyle=d.color;ctx.beginPath();ctx.arc(px,py,5*camZoom,0,Math.PI*2);ctx.fill();
-    // Rotors
-    const rt=now/80;
-    for(let i=0;i<4;i++){
-      const ra=rt+i*Math.PI/2;
-      const rx=px+Math.cos(ra)*7*camZoom,ry=py+Math.sin(ra)*3.5*camZoom;
-      ctx.beginPath();ctx.ellipse(rx,ry,3*camZoom,1.2*camZoom,ra,0,Math.PI*2);
-      ctx.fillStyle=d.color+'99';ctx.fill();
-    }
-    // Scan zone (faint cone)
-    ctx.strokeStyle=d.color+'18';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(px-9*camZoom,py+6*camZoom);
-    ctx.lineTo(spx-7*camZoom,spy);ctx.lineTo(spx+7*camZoom,spy);
-    ctx.lineTo(px+9*camZoom,py+6*camZoom);ctx.stroke();
-    // Label
-    ctx.fillStyle=d.color;ctx.font=`bold ${7*camZoom}px IBM Plex Mono`;ctx.textAlign='center';
-    ctx.fillText(`D${d.id}`,px,py+13*camZoom);
-    ctx.beginPath();ctx.arc(px+6*camZoom,py-6*camZoom,2.5*camZoom,0,Math.PI*2);
-    ctx.fillStyle=d.status==='idle'?'#94a3b8':'#38bdf8';ctx.fill();
-  }
-
-  // HUD
-  ctx.fillStyle='rgba(255,255,255,0.82)';
-  ctx.beginPath();ctx.roundRect(8,8,195,52,4);ctx.fill();
-  ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=0.5;ctx.stroke();
-  ctx.fillStyle='#2a3a50';ctx.font='9px IBM Plex Mono';ctx.textAlign='left';
-  ctx.fillText(`Step: ${step} / ${MAX_STEPS}`,14,24);
-  ctx.fillText(`Wind: ${windSpd.toFixed(1)}× [${wind[0].toFixed(1)}, ${wind[1].toFixed(1)}]`,14,38);
-  ctx.fillText(`Drag to rotate · Scroll to zoom`,14,52);
 }
 
 // ── MINI CHARTS ───────────────────────────────────────────
@@ -961,9 +892,9 @@ function drawBeliefMap(){
 function updateRoster(){
   const r=document.getElementById('roster');r.innerHTML='';
   const all=[
-    ...drones.map(d=>({...d,type:'UAV',ico:'🚁',algo:CFG.droneAlgo,perf:`${d.explored} cells`,role:'Scout'})),
-    ...ugvs.map(u=>({...u,type:'UGV',ico:'🚗',algo:CFG.ugvAlgo,perf:`${u.rescued} rescued`,role:'Rescue'})),
-    ...firetrucks.map(ft=>({...ft,type:'FireTruck',ico:'🚒',algo:'greedy',perf:`${ft.suppressed} suppressed`,role:'Suppression'})),
+    ...drones.map(d=>({...d,type:'UAV',algo:CFG.droneAlgo,perf:`${d.explored} cells`,role:'Scout'})),
+    ...ugvs.map(u=>({...u,type:'UGV',algo:CFG.ugvAlgo,perf:`${u.rescued} rescued`,role:'Rescue'})),
+    ...firetrucks.map(ft=>({...ft,type:'FireTruck',algo:'greedy',perf:`${ft.suppressed} suppressed`,role:'Suppression'})),
   ];
   all.forEach(a=>{
     const sc=a.status==='idle'?'si':a.status==='moving'||a.status==='navigating'||a.status==='responding'?'sn':a.status==='scouting'?'sm':'sf';
@@ -973,8 +904,8 @@ function updateRoster(){
     d.innerHTML=`
       <div class="acb" style="background:${a.color}"></div>
       <div class="act-row">
-        <span class="a-ico">${a.ico}</span>
-        <div><div class="a-name" style="color:${a.color}">${a.type} ${a.id}</div><div class="a-role">${a.role} · ${a.algo.toUpperCase()}</div></div>
+        <span class="a-sw" style="background:${a.color}"></span>
+        <div><div class="a-name" style="color:${a.color}">${a.type} ${a.id}</div><div class="a-role">${a.role} - ${a.algo.toUpperCase()}</div></div>
         <span class="a-st ${sc}">${a.status}</span>
       </div>
       <div class="apb"><div class="apbf" style="width:${Math.min(100,pct)}%;background:${a.color}"></div></div>
@@ -1001,7 +932,7 @@ function endSim(){
   running=false;clearTimeout(tid);
   document.getElementById('bplay').style.display='inline-flex';
   document.getElementById('bpause').style.display='none';
-  log('done',`▣ Complete: ${step} steps`);
+  log('done',`Complete: ${step} steps`);
   setTimeout(showReport,600);
 }
 function showReport(){
@@ -1014,13 +945,13 @@ function showReport(){
   const gcol={S:'#15803d',A:'#1d4ed8',B:'#ca8a04',C:'#ea580c',D:'#b91c1c'}[grade];
 
   document.getElementById('rep-sub').textContent=
-    `${CFG.biome==='mountain'?'Mountain Wildfire':'Urban Disaster'} · Seed ${CFG.seed} · ${step} steps · UAV: ${CFG.droneAlgo.toUpperCase()} · UGV+Truck: ${CFG.ugvAlgo.toUpperCase()}`;
+    `${CFG.biome==='mountain'?'Mountain wildfire':'Urban disaster'} - Seed ${CFG.seed} - ${step} steps - UAV: ${CFG.droneAlgo.toUpperCase()} - UGV+Truck: ${CFG.ugvAlgo.toUpperCase()}`;
   document.getElementById('rep-metrics').innerHTML=`
     <div class="rmc"><div class="rmc-l">Saved</div><div class="rmc-v" style="color:var(--green)">${sv}/${totalSv}</div></div>
     <div class="rmc"><div class="rmc-l">Lost to fire</div><div class="rmc-v" style="color:var(--red)">${lostN}</div></div>
     <div class="rmc"><div class="rmc-l">Explored</div><div class="rmc-v" style="color:var(--blue)">${exP}%</div></div>
     <div class="rmc"><div class="rmc-l">Fire spread</div><div class="rmc-v" style="color:var(--red)">${fiP}%</div></div>
-    <div class="rmc"><div class="rmc-l">UAV→UGV handoffs</div><div class="rmc-v" style="color:#7c3aed">${collabs}</div></div>
+    <div class="rmc"><div class="rmc-l">UAV to UGV handoffs</div><div class="rmc-v" style="color:#7c3aed">${collabs}</div></div>
     <div class="rmc"><div class="rmc-l">Fire suppressed</div><div class="rmc-v" style="color:#ea580c">${suppressed}</div></div>`;
   document.getElementById('rep-grade').innerHTML=`<span class="rgrade" style="color:${gcol}">${grade}</span><span class="rgrade-l">Score: ${score.toFixed(1)}/100</span>`;
   document.getElementById('rep-grade').style.cssText=`text-align:center;margin:16px 0;padding:18px;border-radius:6px;background:${gcol}15;border:1px solid ${gcol}44;`;
@@ -1031,14 +962,14 @@ function showReport(){
   ].join('');
   const loads=ugvs.map(u=>u.rescued);const g=gini(loads);
   document.getElementById('rep-notes').innerHTML=`
-    <b>Fairness Analysis (original paper method)</b><br>
+    <b>Fairness analysis (original paper method)</b><br>
     UGV rescue Gini coefficient: <b>${g.toFixed(4)}</b> (0 = perfectly equal)<br>
-    ${g<0.1?'✓ Excellent: QMIX maintained balanced workload':g<0.25?'✓ Good: minor load imbalance':'⚠ Imbalance: consider increasing fairness weight'}<br>
-    Fairness reward r_t^i = (ε + |e_t^i / ē_t − 1|) / ē_t embedded in QMIX Q-value<br><br>
-    <b>Algorithm Notes</b><br>
-    UAV (${CFG.droneAlgo.toUpperCase()}): ${CFG.droneAlgo==='mappo'?'Coordination penalty drove systematic spread.':CFG.droneAlgo==='boids'?'Emergent cohesion/separation produced coverage.':'Unguided, inefficient.'}<br>
-    UGV (${CFG.ugvAlgo.toUpperCase()}): ${CFG.ugvAlgo==='qmix'?'Value decomposition maintained fair rescue distribution.':CFG.ugvAlgo==='greedy'?'Nearest-first, fast but no fairness.':'Random baseline.'}<br>
-    Fire Trucks: Greedy nearest-fire targeting, suppresses 5-cell radius on arrival.`;
+    ${g<0.1?'Good: QMIX kept the workload balanced':g<0.25?'Acceptable: minor load imbalance':'Imbalance: consider increasing the fairness weight'}<br>
+    Fairness reward r_t^i = (eps + |e_t^i / e_bar_t - 1|) / e_bar_t, embedded in the QMIX Q-value.<br><br>
+    <b>Algorithm notes</b><br>
+    UAV (${CFG.droneAlgo.toUpperCase()}): ${CFG.droneAlgo==='mappo'?'Coordination penalty drove systematic spread.':CFG.droneAlgo==='boids'?'Emergent cohesion and separation produced coverage.':'Unguided, inefficient.'}<br>
+    UGV (${CFG.ugvAlgo.toUpperCase()}): ${CFG.ugvAlgo==='qmix'?'Value decomposition kept rescue distribution fair.':CFG.ugvAlgo==='greedy'?'Nearest first, fast but not fair.':'Random baseline.'}<br>
+    Fire trucks: greedy nearest-fire targeting, suppress a 5-cell radius on arrival.`;
   document.getElementById('report').classList.add('show');
 }
 
@@ -1074,14 +1005,14 @@ function initSim(){
   step=0;collabs=0;saved=0;suppressed=0;lost=0;explHist=[];fireHist=[];
   const wa=rng.float(0,Math.PI*2);wind=[Math.cos(wa),Math.sin(wa)];windSpd=rng.float(0.6,1.8);
   genTerrain();spawnAgents();
-  resizeCanvas();updateRoster();drawBeliefMap();
+  resizeRenderer();buildTerrainMesh();buildAgentMeshes();updateOverlayTexture();syncAgentMeshes();
+  updateRoster();drawBeliefMap();updateHud();
   ['cstep','m-sv','m-co','m-sup','m-lost'].forEach(id=>document.getElementById(id).textContent='0');
   document.getElementById('m-fi').textContent='0%';
   document.getElementById('m-ex').textContent='0%';
   document.getElementById('epbar').style.width='0%';
   log('info',`Init: ${CFG.biome} seed:${CFG.seed} | ${CFG.nDrones} UAV (${CFG.droneAlgo}) + ${CFG.nUGV} UGV (${CFG.ugvAlgo}) + ${CFG.nFT} FireTruck`);
-  log('info',`Wind: ${windSpd.toFixed(1)}× dir:(${wind[0].toFixed(1)},${wind[1].toFixed(1)}) | ${totalSv} survivors`);
-  render();
+  log('info',`Wind: ${windSpd.toFixed(1)}x dir:(${wind[0].toFixed(1)},${wind[1].toFixed(1)}) | ${totalSv} survivors`);
 }
 function setSpawn(m,btn){CFG.spawn=m;document.querySelectorAll('#sp-rand,#sp-stat').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 function setAlgo(type,btn){
@@ -1100,7 +1031,7 @@ if(seedEl){
   seedEl.addEventListener('keydown',e=>{if(['e','E','+','-','.'].includes(e.key))e.preventDefault();});
   seedEl.addEventListener('blur',()=>{if(!seedEl.value||seedEl.value<1)seedEl.value=1;if(seedEl.value>9999)seedEl.value=9999;});
 }
-document.getElementById('spd').addEventListener('input',e=>document.getElementById('spdv').textContent=e.target.value+'×');
+document.getElementById('spd').addEventListener('input',e=>document.getElementById('spdv').textContent=e.target.value+'x');
 
 document.getElementById('bplay').addEventListener('click',startSim);
 document.getElementById('bpause').addEventListener('click',pauseSim);
@@ -1112,15 +1043,15 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Space'){e.preventDefault();running?pauseSim():startSim();}
   if(e.code==='ArrowRight')simStep();
   if(e.code==='KeyR')resetSim();
-  if(e.code==='ArrowLeft')camRot-=0.15;
-  if(e.code==='ArrowUp')camZoom=Math.min(2,camZoom+0.1);
-  if(e.code==='ArrowDown')camZoom=Math.max(0.4,camZoom-0.1);
-  render();
 });
 
-// Animate (fire flicker + drone rotors)
-function animLoop(){render();requestAnimationFrame(animLoop);}
-resizeCanvas();initSim();animLoop();
+// ── MAIN LOOP ─────────────────────────────────────────────
+function animLoop(){
+  controls.update();
+  renderer.render(scene,camera);
+  requestAnimationFrame(animLoop);
+}
+resizeRenderer();initSim();animLoop();
 </script>
 </body>
 </html>
